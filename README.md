@@ -13,7 +13,7 @@ TrendCatcher is a versatile R package for identifying dynamic differentially exp
 if (!require("devtools")) {
   install.packages("devtools")
 }
-devtools::install_github("wangxinge/TrendCatcher_1.0.0", dependencies = TRUE, build_vignettes = FALSE)
+devtools::install_github("jaleesr/TrendCatcher_1.0.0", dependencies = TRUE, build_vignettes = FALSE)
 ```
 
 # Documentation and Demo Scripts
@@ -45,7 +45,7 @@ Some quick examples to show how to use **TrendCatcher**.
 
 ```r
 library("TrendCatcher")
-example.file.path<-system.file("extdata", "Lung_DemoCountTable.csv", package = "TrendCatcher")
+example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")
 master.list<-run_TrendCatcher(count.table.path = example.file.path, 
 baseline.t = 0,
 time.unit = "h",
