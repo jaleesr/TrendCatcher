@@ -1,0 +1,121 @@
+---
+title: "1. Identify Dynamic Genes and Generate Master Table."
+output: html_document
+---
+
+#### 1. Load TrendCatcher R package.
+
+```{r, results='hide', message=FALSE}
+library(TrendCatcher)
+```
+
+#### 2. Now read the demo count table.
+
+TrendCatcher **requires** the input count table in CSV file and with the column name in format as "ProjectName_Time_Rep1". 
+And the first column as gene symbol or gene ensembl. 
+
+```{r}
+example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")
+tb<-read.csv(example.file.path, row.names = 1)
+head(tb)
+```
+
+
+#### 2. Now read the demo count table and run TrendCatcher. 
+
+This function will take few minutes to finish running. 
+
+```{r, results='hide', eval=FALSE}
+example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")
+
+master.list<-run_TrendCatcher(count.table.path = example.file.path,
+baseline.t = 0,
+time.unit = "h",
+min.low.count = 1,
+para.core.n = NA,
+dyn.p.thres = 0.05)
+```
+
+#### 3. Check master.list in detail.
+
+To save time of running, we already put the output master.list object in the '/inst/extdata' folder. You can simply load it into your environment.
+
+First check what elements are included in the master.list list object. 
+
+- "time.unit" is the study time unit, for example "h" represents hour. 
+- "baseline.t" is the baseline time. Here it is hour 0.
+- "t.arr" is the time array in temporal study. Here is 0, 6, 24, 48, 72, 168h.
+- "Project.name" is the project name. Here is "B".
+- "raw.df" is the count table ordered by time and replicate ID. 
+- "fitted.count" is the ANOVA smooth model fitted count number from replicates.
+
+```{r}
+demo.master.list.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+load(demo.master.list.path)
+names(master.list)
+```
+
+```{r}
+print(c(master.list$time.unit, master.list$baseline.t))
+```
+
+```{r}
+master.list$t.arr
+```
+```{r}
+master.list$Project.name
+```
+
+```{r}
+head(master.list$raw.df)
+```
+
+The fitted.count table each column represents.
+
+- Gene, gene ensembl or gene symbol
+- Time, time measured.
+- Fit.Count, the ANOVA smooth model fitted count number.
+- mu, the estimated mean count.
+- disp, dispersion estimated.
+- t.p.val, the p-value at each time point.
+- dyn.p.val, the combined dynamic p-value.
+- dyn.p.val.adj, the adjusted p-value from all hypothesis testing. 
+
+```{r}
+head(master.list$fitted.count)
+```
+For the master table, each column represents.
+
+- Gene, gene ensembl or gene symbol.
+- pattern, the gene trajectory master-pattern type.
+- start.idx, the index of where the corresponding trend start in t.arr.
+- end.idx, the index of where the corresponding trend end in the t.arr.
+- dynTime, the time where t.p.val <=0.05.
+- dynSign, "-" means down, "+" means up.
+- start.t, the time of where the corresponding trend start.
+- end.t, the time of where the corresponding trend end.
+- pattern_str, the string ready for print indicates the gene trajectory sub-pattern type.
+
+
+```{r}
+head(master.list$master.table)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

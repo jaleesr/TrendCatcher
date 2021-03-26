@@ -1,0 +1,84 @@
+---
+title: "2. Gene Trajectory Analysis"
+output: html_document
+---
+
+#### 1. Load TrendCatcher R package.
+
+```{r, results='hide', message=FALSE}
+library(TrendCatcher)
+```
+
+#### 2. Now read the demo master.list.
+
+```{r}
+demo.master.list.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+load(demo.master.list.path)
+```
+
+#### 3. ID convention. 
+
+The demo master table is using gene ENSEMBL as row name. For input CSV file using ENSEMBL ID as row name.
+TrendCatcher provides some easy manipulation functions to add gene SYMBOL column into the master.table. 
+
+```{r}
+gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
+master.table.new<-cbind(master.list$master.table, gene.symbol.df[match(master.list$master.table$Gene, gene.symbol.df$Gene), c("Symbol", "description")])
+master.list$master.table<-master.table.new
+head(master.list$master.table)
+```
+
+If the input CSV file using GENE SYMBOL as row name. Just simply add Symbol column to the master.table.
+Because some function requires the Symbol column.
+
+```{r}
+### ONLY use this command if CSV file is using GENE SYMBOL as row name!!!!!!
+#master.list$master.table$Symbol<-master.list$master.table$Gene 
+```
+
+#### 4. Plot Individual Gene Trajectory
+
+To look at each single gene trajectory and fitted count. We use function draw_GeneTraj. 
+
+```{r, fig.width=10, fig.height=6}
+gene.symbol.arr<-master.list$master.table$Symbol[1:6]
+p<-draw_GeneTraj(master.list = master.list, gene.symbol.arr = gene.symbol.arr, ncol = 3, nrow = 2)
+p
+```
+#### 5. Plot Group Gene Trajectories.
+
+Plot gene trajectories together grouped by their sub-type pattern. 
+
+```{r, fig.width=10, fig.height=10}
+draw_TrajClusterGrid(master.list = master.list, min.traj.n = 10)
+```
+
+#### 6. Plot Gene Trajectory Composition.
+
+Use hierachical pie chart to visulaize gene trajectory master-pattern and sub-pattern composition. 
+This is useful when comparing two or more projects. 
+
+```{r, fig.height=7}
+draw_TrajClusterPie(master.list = master.list,inner.radius = 0.7, cex.out = 1, cex.in = 1, fig.title = "Brain EC")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

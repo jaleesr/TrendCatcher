@@ -1,0 +1,27 @@
+reference:
+- title: "Core Algorithm"
+  desc: "Main functions to run TrendCatcher."
+- contents: 
+  - run_TrendCatcher
+  - fit_single_gene_const
+  - fit_single_gene_spline
+
+- title: "Preprocessing to run TrendCatcher"
+  desc: "To check sample quality and do normalization and batch correction."
+- contents:
+  - Check_CountTable_Format
+  - preprocess_TrendCatcher
+
+- title: "Visualization"
+  desc: "Multiple visualization functions."
+- contents:
+  - starts_with("draw_")
+  
+  
+- title: "Helper functions"
+  desc: "Some helper functions to calculate p-value and reformat data."
+- contents:
+  - starts_with("get_")
+  - starts_with("cal_")
+  - combine_p_single_gene
+  

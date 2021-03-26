@@ -1,0 +1,220 @@
+
+#' Get the time array from count table
+#'
+#' It take the count table, grep the time element from column name.
+#' The column name of the count table must satisfy \code{Prj_Time_Rep1} format.
+#'
+#' @param raw.count.df, a count table.
+#' @return a numeric array of each sample's time.
+#' @export
+#'
+get_time_array<-function(raw.count.df){
+  col.info.df<-as.data.frame(str_split(colnames(raw.count.df), "_", simplify = T))
+  colnames(col.info.df)<-c("Project", "Time", "RepID")
+  t.arr<-as.numeric(col.info.df$Time)
+  return(t.arr)
+}
+#' Get the replicate array from count table
+#'
+#' It take the count table, grep the replicate element from column name. The column name of the count table must satisfy "Prj_Time_Rep1" format.
+#'
+#' @param raw.count.df, a count table.
+#' @return a numeric array of each sample's replicate.
+#' @export
+#'
+get_rep_array<-function(raw.count.df){
+  col.info.df<-as.data.frame(str_split(colnames(raw.count.df), "_", simplify = T))
+  colnames(col.info.df)<-c("Project", "Time", "RepID")
+  rep.arr<-as.numeric(sub("Rep", "",col.info.df$RepID))
+  return(rep.arr)
+}
+
+
+#' Convert a single gene's count row number into data frame with two columns.
+#'
+#' @param gene.row.info, a single row from count table.
+#' @param gene.name, the gene name.
+#' @param time.arr, the return value from get_time_array function.
+#' @param rep.arr, the return value from get_rep_array function.
+#' @return a dataframe object ordered by time and replicate id.
+#' @export
+#'
+transform_single_gene_df<-function(gene.row.info, gene.name, time.arr, rep.arr){
+  count.arr<-as.numeric(gene.row.info)
+  data.trans = data.frame(Gene = gene.name, Count = count.arr, Time = time.arr, Rep = rep.arr)
+  data.trans = data.trans[order(data.trans[,"Rep"], data.trans[,"Time"]),]
+  return(data.trans)
+}
+#' Fit the non-baseline count data into a smoothed ANOVA model.
+#'
+#' @param data.trans, a data frame returned from transform_single_gene_df, without the baseline time.
+#' @return a dataframe with all the fitted count from spline model.
+#' @export
+#'
+fit_single_gene_spline<-function(data.trans){
+  mod.fit <- gssanova(Count~Time, data = data.trans, family = "nbinomial")
+  points <- unique(data.trans$Time)
+  mod.pred <- predict(mod.fit, data.frame(Time = points), se = TRUE)
+  # Prediction Data
+  single.gene.spine.fit = data.frame(Gene = data.trans$Gene[1],Time = points, Count = mod.fit$nu/exp(mod.pred$fit))
+  return(single.gene.spine.fit)
+}
+
+ConstNB <- function(theta.arr, count.arr, disp.var) {
+  scaMu <- exp(theta.arr[1])
+  if (scaMu < 10^(-10)) {
+    scaMu <- 10^(-10)
+  }
+  log.like.var <- sum(dnbinom(
+    count.arr,
+    mu = scaMu,
+    size = disp.var, log = TRUE))
+  return(log.like.var)
+}
+
+ConstNB_comp <- compiler::cmpfun(ConstNB)
+
+#' Fit the baseline count data into a constant negative binomial model.
+#'
+#' @param count.arr, a data frame returned from transform_single_gene_df, only with the baseline time.
+#' @param disp.var, the dispersion value estimated from DESeq2.
+#' @return a list contain all the estimated value from NB model.
+#' @export
+#'
+fit_single_gene_const <- function(
+  # Inspired from ImpulseDE2
+  count.arr, disp.var,
+  MAXIT = 1000, RELTOL = 10^(-8), trace = 10) {
+  param.guess.arr <- log(mean(count.arr, na.rm = TRUE) + 1)
+  lsFit <- tryCatch({
+    optim(par = param.guess.arr, fn = ConstNB_comp,
+          count.arr = count.arr, disp.var = disp.var, method = "BFGS",
+          control = list(maxit = MAXIT, reltol = RELTOL, fnscale = -1, trace = trace)
+    )[c("par", "value", "convergence")]
+  }, error = function(strErrorMsg) {
+    print(paste0("ERROR: Fitting Const NB error!!!"))
+    print(paste0("param.guess.arr ",
+                 paste(param.guess.arr, collapse = " ")))
+    print(paste0("count.arr ",
+                 paste(count.arr, collapse = " ")))
+    print(paste0("disp.var ",
+                 paste(disp.var, collapse = " ")))
+    print(paste0("MAXIT ", MAXIT))
+    print(strErrorMsg)
+    stop(strErrorMsg)
+  })
+  # Extract parameter estimates
+  scaMu <- exp(lsFit$par[1])
+  # Catch boundary of likelihood domain on mu space:
+  if (scaMu < 10^(-10)) {
+    scaMu <- 10^(-10)
+  }
+  scaNParamUsed <- 1
+  return(list(scaMu = scaMu,
+              disp.varParam = disp.var,
+              scaLL = lsFit$value, scaConvergence = lsFit$convergence))
+}
+
+#' Calculate the significance of the dynamic signal for a single gene's single time expression.
+#' Compared to baseline NB confidence interval.
+#'
+#' @param obs.val, estimated value from non-baseline model.
+#' @param size, the size of negative binomial model.
+#' @param mu, the estimated mean of constant negative binomial model
+#' @return a numeric p-value for time t.
+#' @export
+#'
+
+cal_p<-function(obs.val, size, mu){
+  if(obs.val >= mu){
+    p<-pnbinom(obs.val, size = size, mu = mu, lower.tail = F)
+  } else{
+    p<-pnbinom(obs.val, size = size, mu = mu, lower.tail = T)
+  }
+  return(p)
+}
+#' Calculate the significance of the dynamic signal for a single gene's over alll the time points.
+#'
+#' @param const.output, list returned from fit_single_gene_const function.
+#' @param spline.output, dataframe returned from fit_single_gene_spline function.
+#' @return p-value for a single point.
+#' @export
+#'
+cal_time_p_single_gene<-function(const.output, spline.output){
+  obs.arr<-spline.output$Count
+  mu<-const.output$scaMu
+  size<-const.output$disp.varParam
+  p.arr<-sapply(obs.arr, cal_p, size, mu)
+  p.arr[1]<-1 # To make sure baseline is not significant
+  single_gene_time_p<-data.frame(Gene = spline.output$Gene, Time = spline.output$Time,
+                                 Spine.Count = spline.output$Count, Const.Count.Mu = mu, Const.Disper = size,
+                                 p.val = p.arr)
+  return(single_gene_time_p)
+}
+#' Combine multiple p-value using Fisher's p-value combination method.
+#'
+#' @param p.arr, a vector of p-values.
+#' @return a numeric combined p-value.
+#' @export
+#'
+combine_p_single_gene<-function(p.arr){
+  p.arr<-p.arr[-1]
+  p.combine<-fisher.method(matrix(p.arr, ncol=length(p.arr)),
+                           method = c("fisher"),
+                           p.corr="BH",
+                           zero.sub = 1e-10,
+                           na.rm = TRUE,
+                           mc.cores=NULL)
+  return(p.combine)
+}
+
+gene_pattern_assignment<-function(gene.df, gene.p.adj){
+  if(gene.p.adj<=0.05){
+    l.arr<-gene.df$t.p.val[2:(nrow(gene.df)-1)]
+    idx<-which(l.arr<=0.05)+1
+    idx<-c(1, idx, nrow(gene.df))
+    pattern.list<-get_traj_pattern(gene.df$Fit.Count[idx])
+    start.idx<-paste0(idx[pattern.list$start.idx], "_", collapse = "")
+    end.idx<-paste0(idx[pattern.list$end.idx], "_", collapse = "")
+    pattern.str<-paste0(pattern.list$pattern, "_", collapse = "")
+    pattern.df<-data.frame(pattern = pattern.str, start.idx = start.idx, end.idx = end.idx)
+  } else{
+    pattern.df<-data.frame(pattern = "flat", start.idx = 0, end.idx = 0)
+  }
+  return(pattern.df)
+}
+
+
+get_traj_pattern<-function(t.arr){
+  # Decide the pattern
+  direction<-ifelse(t.arr[1]>=t.arr[2], "down", "up")
+  segments.direction.push<-c(direction)
+  segments.start.idx.push<-c(1)
+  max.idx<-length(t.arr)-1
+  start.idx<-c(1)
+  end.idx<-numeric()
+  for(i in 1:max.idx){
+    curr.val<-t.arr[i]
+    next.val<-t.arr[i+1]
+    if(direction=="up"){
+      if(curr.val>=next.val){
+        segments.start.idx.push<-c(segments.start.idx.push, i)
+        direction<-"down"
+        segments.direction.push<-c(segments.direction.push, direction)
+        end.idx<-c(end.idx, i)
+        start.idx<-c(start.idx, i)
+      }
+    }else{
+      if(curr.val<next.val){
+        segments.start.idx.push<-c(segments.start.idx.push, i)
+        direction<-"up"
+        segments.direction.push<-c(segments.direction.push, direction)
+        end.idx<-c(end.idx, i)
+        start.idx<-c(start.idx, i)
+      }
+    }
+  }
+  end.idx<-c(end.idx, max.idx+1)
+  pattern.list<-list(start.idx = start.idx, end.idx = end.idx, pattern = segments.direction.push)
+  return(pattern.list)
+}

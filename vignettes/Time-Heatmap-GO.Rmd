@@ -1,0 +1,90 @@
+---
+title: "3.Time-Heatmap-GO"
+output: html_document
+---
+
+#### 1. Load TrendCatcher R package.
+
+```{r, results='hide', message=FALSE}
+library(TrendCatcher)
+```
+
+#### 2. Now read the demo master.list.
+
+```{r}
+demo.master.list.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+load(demo.master.list.path)
+```
+
+
+#### 3. Use GO enrichment analysis to construct Time-Heatmap
+
+To draw Time-Heatmap using GO database, please use draw_TimeHeatmap_GO function. This function will return a list composed of a TimeHeatmap plot and a merge.df dataframe. Due to the limited size of Time-Heatmap for visualization, users can play with merge.df which includes all the GO enrichment analysis for each time window. 
+
+```{r, echo=FALSE, fig.height=15, fig.width=15}
+GO.time.df<-draw_TimeHeatmap_GO(master.list = master.list, logFC.thres = 1, top.n = 10, dyn.gene.p.thres = 0.05,
+                              keyType = "ENSEMBL", OrgDb = "org.Mm.eg.db", ont = "BP", term.width = 80,
+                              GO.enrich.p = 0.05, figure.title = "", save.pdf.path = NA, pdf.width = 15, pdf.height =15)
+```
+
+The full version of GO enrichment output. 
+
+```{r}
+GO.time.df$merge.df[1:5, 1:5]
+```
+
+#### 4. Look at Genes candidates from picked enriched GO terms.
+
+To look at which genes are involved within the TimeHeatmap above. We can call draw_GOHeatmap function. 
+This function is useful when one is comparing multiple projects. 
+
+```{r, fig.height=20, fig.width=7}
+go.terms<-c("regulation of defense response", "leukocyte migration", "myeloid leukocyte migration", "leukocyte chemotaxis",
+ "granulocyte chemotaxis", "cellular response to chemokine", "chemokine-mediated signaling pathway", "angiogenesis", "sprouting angiogenesis",  "respone to bacterium", "leukocyte mediated immunity")
+gene.GO.df<-draw_GOHeatmap(master.list = master.list, time.window = "0h-6h", go.terms = go.terms, id.ensembl = TRUE, merge.df = GO.time.df$merge.df, 
+                           logFC.thres = 2)
+
+```
+
+The data.frame gene.GO.df contains all the genes we found through TrendCatcher without logFC threshold.
+
+- type, activation pathway or deactivation pathway.
+- Description, GO term.
+- gene, gene symbol or gene ensembl.
+- logFC.prev.bk, logFC compared to previous break point.
+- prev.bk.t, previous break poin time.
+- Symbol, gene symbol.
+- description, gene description.
+
+
+```{r}
+head(gene.GO.df)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
