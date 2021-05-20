@@ -89,7 +89,7 @@ Check_CountTable_Format<-function(count.table.path, min.low.count = 1){
   remove.idx<-which(rowSums(t.min.df)<=min.low.count)
   if(length(remove.idx)!=0){
     count.table<-raw.df[-remove.idx,]
-  }
+  } else{count.table<-raw.df}
   message(c("Passed Format Check. Count table is ", paste0(ncol(raw.df), " Samples, ", nrow(raw.df), " Genes")))
   message(c("Found ", length(remove.idx), " low count genes."))
   remove.genes<-names(remove.idx)
