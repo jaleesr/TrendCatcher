@@ -18,7 +18,6 @@ Depends:
     gss (>= 2.2.2),
     compiler (>= 4.0.3),
     stringr (>= 1.4.0),
-    metaseqR (>= 1.28.0),
     RColorBrewer (>= 1.1.2),
     gridExtra (>= 2.3),
     ggplot2 (>= 3.3.2),
