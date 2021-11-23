@@ -89,5 +89,5 @@ draw_TimeHeatmap_selGO<-function(time_heatmap, sel.go, master.list, GO.perc.thre
     print(p)
     dev.off()
   }
-  return(list(time.heatmap = p, merge.df = merge.df, GO.df = GO.df))
+  return(list(time.heatmap = p, merge.df = time_heatmap$merge.df, GO.df = GO.df))
 }
