@@ -20,7 +20,7 @@ devtools::install_github("jaleesr/TrendCatcher_1.0.0", dependencies = TRUE, buil
 
 Instructions, documentation, and tutorials can be found at:
 
-+ [https://jaleesr.github.io/TrendCatcher_1.0.0/](https://jaleesr.github.io/TrendCatcher_1.0.0/)
++ [https://jaleesr.github.io/TrendCatcher](https://jaleesr.github.io/TrendCatcher/)
 
 
 A PDF manual [TrendCatcher_1.0.0.pdf](./TrendCatcher_1.0.0.pdf) can be found in the repository.
