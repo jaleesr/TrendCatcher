@@ -13,7 +13,7 @@ TrendCatcher is a versatile R package for identifying dynamic differentially exp
 if (!require("devtools")) {
   install.packages("devtools")
 }
-devtools::install_github("jaleesr/TrendCatcher_1.0.0", dependencies = TRUE, build_vignettes = FALSE)
+devtools::install_github("jaleesr/TrendCatcher", dependencies = TRUE, build_vignettes = FALSE)
 ```
 
 # TrendCatcher Framework Overview

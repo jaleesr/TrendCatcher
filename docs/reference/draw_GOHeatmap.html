@@ -81,7 +81,7 @@ And showing all the genes used for enrichment analysis and their logFC compared 
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -195,18 +195,18 @@ file path. If not needed save as PDF file, set it to NA. By default iS NA.</p></
 time.heatmap is the ggplot object. merge.df includes all the enrichR enrichment result and activation/deactivation time.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>example.file.path</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"BrainMasterList.rda"</span>, package <span class='op'>=</span> <span class='st'>"TrendCatcher"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span><span class='op'>(</span><span class='va'>example.file.path</span><span class='op'>)</span>
-<span class='va'>th.obj</span><span class='op'>&lt;-</span><span class='fu'><a href='draw_TimeHeatmap_GO.html'>draw_TimeHeatmap_GO</a></span><span class='op'>(</span>master.list <span class='op'>=</span> <span class='va'>master.list</span><span class='op'>)</span>
-<span class='va'>merge.df</span><span class='op'>&lt;-</span><span class='va'>th.obj</span><span class='op'>$</span><span class='va'>merg.df</span>
-
-<span class='va'>time.window</span><span class='op'>&lt;-</span><span class='st'>"0h-6h"</span>
-<span class='va'>go.terms</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"regulation of defense response"</span>, <span class='st'>"leukocyte migration"</span>, <span class='st'>"myeloid leukocyte migration"</span>, <span class='st'>"leukocyte chemotaxis"</span>,
-<span class='st'>"granulocyte chemotaxis"</span>, <span class='st'>"cellular response to chemokine"</span>, <span class='st'>"chemokine-mediated signaling pathway"</span>, <span class='st'>"angiogenesis"</span>, <span class='st'>"sprouting angiogenesis"</span>,  <span class='st'>"respone to bacterium"</span>, <span class='st'>"leukocyte mediated immunity"</span><span class='op'>)</span>
-<span class='va'>go.df</span><span class='op'>&lt;-</span><span class='fu'>draw_GOHeatmap</span><span class='op'>(</span>master.list <span class='op'>=</span> <span class='va'>master.list</span>, time.window <span class='op'>=</span> <span class='st'>"0h-6h"</span>, go.terms <span class='op'>=</span> <span class='va'>go.terms</span>, id.ensembl <span class='op'>=</span> <span class='cn'>TRUE</span>, merge.df <span class='op'>=</span> <span class='va'>merge.df</span>, logFC.thres <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>example.file.path</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"BrainMasterList.rda"</span>, package <span class='op'>=</span> <span class='st'>"TrendCatcher"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span><span class='op'>(</span><span class='va'>example.file.path</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>th.obj</span><span class='op'>&lt;-</span><span class='fu'><a href='draw_TimeHeatmap_GO.html'>draw_TimeHeatmap_GO</a></span><span class='op'>(</span>master.list <span class='op'>=</span> <span class='va'>master.list</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>merge.df</span><span class='op'>&lt;-</span><span class='va'>th.obj</span><span class='op'>$</span><span class='va'>merg.df</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>time.window</span><span class='op'>&lt;-</span><span class='st'>"0h-6h"</span></span>
+<span class='r-in'><span class='va'>go.terms</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"regulation of defense response"</span>, <span class='st'>"leukocyte migration"</span>, <span class='st'>"myeloid leukocyte migration"</span>, <span class='st'>"leukocyte chemotaxis"</span>,</span>
+<span class='r-in'><span class='st'>"granulocyte chemotaxis"</span>, <span class='st'>"cellular response to chemokine"</span>, <span class='st'>"chemokine-mediated signaling pathway"</span>, <span class='st'>"angiogenesis"</span>, <span class='st'>"sprouting angiogenesis"</span>,  <span class='st'>"respone to bacterium"</span>, <span class='st'>"leukocyte mediated immunity"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>go.df</span><span class='op'>&lt;-</span><span class='fu'>draw_GOHeatmap</span><span class='op'>(</span>master.list <span class='op'>=</span> <span class='va'>master.list</span>, time.window <span class='op'>=</span> <span class='st'>"0h-6h"</span>, go.terms <span class='op'>=</span> <span class='va'>go.terms</span>, id.ensembl <span class='op'>=</span> <span class='cn'>TRUE</span>, merge.df <span class='op'>=</span> <span class='va'>merge.df</span>, logFC.thres <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

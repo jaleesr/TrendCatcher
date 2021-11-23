@@ -82,7 +82,7 @@ It creates pdf figure report to show before and after of normalization and batch
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -190,17 +190,17 @@ By default is NA.</p></td>
     <p>A matrix array object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>example.file.path</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"Brain_DemoCountRawTable.csv"</span>, package <span class='op'>=</span> <span class='st'>"TrendCatcher"</span><span class='op'>)</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>count.table</span><span class='op'>&lt;-</span><span class='fu'>preprocess_TrendCatcher</span><span class='op'>(</span>count.table.path <span class='op'>=</span> <span class='va'>example.file.path</span>,
-need.batch.correction <span class='op'>=</span> <span class='cn'>TRUE</span>,
-need.normalization <span class='op'>=</span> <span class='cn'>TRUE</span>,
-batch.arr <span class='op'>=</span><span class='st'>""</span>,
-pdf.file.path <span class='op'>=</span> <span class='cn'>NA</span>,
-pdf.width<span class='op'>=</span><span class='fl'>8</span>, pdf.height<span class='op'>=</span><span class='fl'>10</span>,
-n.low.count <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>example.file.path</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, <span class='st'>"Brain_DemoCountRawTable.csv"</span>, package <span class='op'>=</span> <span class='st'>"TrendCatcher"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='va'>count.table</span><span class='op'>&lt;-</span><span class='fu'>preprocess_TrendCatcher</span><span class='op'>(</span>count.table.path <span class='op'>=</span> <span class='va'>example.file.path</span>,</span>
+<span class='r-in'>need.batch.correction <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>need.normalization <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>batch.arr <span class='op'>=</span><span class='st'>""</span>,</span>
+<span class='r-in'>pdf.file.path <span class='op'>=</span> <span class='cn'>NA</span>,</span>
+<span class='r-in'>pdf.width<span class='op'>=</span><span class='fl'>8</span>, pdf.height<span class='op'>=</span><span class='fl'>10</span>,</span>
+<span class='r-in'>n.low.count <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

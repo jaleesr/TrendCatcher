@@ -1,9 +1,9 @@
-pandoc: 2.7.3
+pandoc: 2.11.4
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   Gene-Trajectory-Analysis: Gene-Trajectory-Analysis.html
   Identify-Dynamic-Genes: Identify-Dynamic-Genes.html
   Time-Heatmap-GO: Time-Heatmap-GO.html
-last_built: 2021-04-15T04:28Z
+last_built: 2021-11-23T23:23Z
 

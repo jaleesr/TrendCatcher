@@ -41,8 +41,24 @@
 #'
 #'
 draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 1, top.n = 10, dyn.gene.p.thres = 0.05,
-                                   dbs = "BioPlanet_2019", id.ensembl = TRUE, term.width = 80, OrgDb = "org.Mm.eg.db",
-                                   GO.enrich.p = 0.05, figure.title = "", save.pdf.path = NA, pdf.width = 13, pdf.height =15){
+                                   dbs = "BioPlanet_2019", term.width = 80, OrgDb = "org.Mm.eg.db",
+                                   GO.enrich.p = 0.05, figure.title = "", 
+                                   save.tiff.path = NA, tiff.res = 100, tiff.width = 1500, tiff.height =1500){
+    if(FALSE){
+      # for testing
+      logFC.thres = 0.0
+      top.n = 10
+      dyn.gene.p.thres = 0.05
+      dbs = "BioPlanet_2019"
+      OrgDb = "org.Mm.eg.db"
+      GO.enrich.p = 0.05
+      figure.title = ""
+      term.width<-80
+      save.tiff.path = NA
+      tiff.res = 100
+      tiff.width = 1500
+      tiff.height =1500
+    }
 
   ### 1. Get the time array
   t.arr<-master.list$t.arr
@@ -53,66 +69,71 @@ draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 1, top.n = 10, dyn
   dyn.gene.pattern<-master.list$master.table %>% filter(dyn.p.val.adj<=dyn.gene.p.thres)
   ### 4. Up-regulated pathways genes
   # Loop by time window to filter out genes going up within each time window
-  act.list<-list()
-  for(i in 1:(length(t.arr)-1)){
-    # For each time window
-    start.t.thres<-t.arr[i]
-    end.t.thres<-t.arr[i+1]
-    list.name<-paste0(start.t.thres,t.unit,"-", end.t.thres, t.unit)
-    cat("Processing up-regulated genes for time window ", list.name, "\n")
-    # For each gene check if it activated within the time range
-    act.list[[list.name]]<-plyr::ddply(dyn.gene.pattern, .(Gene), function(df){
-      # Select pattern include "up"
-      idx<-grep("up", str_split(df$pattern,"_", simplify = T))
-      if(length(idx)!=0){
-        # Select within the range
-        start.idx<-as.numeric(str_split(df$start.idx, "_", simplify = T)[idx])
-        end.idx<-as.numeric(str_split(df$end.idx, "_", simplify = T)[idx])
-        start.t<-t.arr[start.idx]
-        end.t<-t.arr[end.idx]
-        act.flag<-0
-        # For each range need to check
-        for(j in 1:length(start.t)){
-          # Make sure within the range
-          if(start.t[j]<=start.t.thres & end.t[j]>=end.t.thres){
-            # Make sure the end.t.thres logFC is larger than start.t.thres
-            data.trans<-master.list$fitted.count %>% filter(Gene == df$Gene)
-            end.t.thres.count<-data.trans$Fit.Count[which(data.trans$Time == end.t.thres)]
-            # start.t.thres.count need to be the previous bk value
-            bk.arr<-str_split(df$start.t, "_", simplify = T)[1,]
-            bk.arr<-as.numeric(bk.arr[-length(bk.arr)])
-            previous.bk.t<-max(bk.arr[bk.arr<=start.t.thres])
-            prev.bk.count<-data.trans$Fit.Count[which(data.trans$Time == previous.bk.t)]
-            if(log(end.t.thres.count, base = 2)-log(prev.bk.count, base = 2)>logFC.thres){
-              act.flag<-1
-            }
-          }
-        }
-        if(act.flag==1){
-          return(df)
-        }
-      }
-    })
+  ### 4. Up-regulated pathways genes
+  # Loop by time window to filter out genes going up within each time window
+  act.list <- list()
+  for (i in 1:(length(t.arr) - 1)) {
+    start.t.thres <- t.arr[i]
+    end.t.thres <- t.arr[i + 1]
+    list.name <- paste0(start.t.thres, t.unit, "-", end.t.thres, 
+                        t.unit)
+    cat("Processing up-regulated genes for time window ", 
+        list.name, "\n")
+    act.list[[list.name]] <- plyr::ddply(dyn.gene.pattern, 
+                                         .(Gene), function(df) {
+                                           idx <- grep("up", str_split(df$pattern, "_", 
+                                                                       simplify = T))
+                                           if (length(idx) != 0) {
+                                             start.idx <- as.numeric(str_split(df$start.idx, 
+                                                                               "_", simplify = T)[idx])
+                                             end.idx <- as.numeric(str_split(df$end.idx, 
+                                                                             "_", simplify = T)[idx])
+                                             start.t <- t.arr[start.idx]
+                                             end.t <- t.arr[end.idx]
+                                             act.flag <- 0
+                                             for (j in 1:length(start.t)) {
+                                               if (start.t[j] <= start.t.thres & end.t[j] >= 
+                                                   end.t.thres) {
+                                                 data.trans <- master.list$fitted.count %>% 
+                                                   filter(Gene == df$Gene)
+                                                 end.t.thres.count <- data.trans$Fit.Count[which(data.trans$Time == 
+                                                                                                   end.t.thres)]
+                                                 bk.arr <- str_split(df$start.t, "_", simplify = T)[1, 
+                                                 ]
+                                                 bk.arr <- as.numeric(bk.arr[-length(bk.arr)])
+                                                 previous.bk.t <- max(bk.arr[bk.arr <= 
+                                                                               start.t.thres])
+                                                 prev.bk.count <- data.trans$Fit.Count[which(data.trans$Time == 
+                                                                                               previous.bk.t)]
+                                                 if (log(end.t.thres.count, base = 2) - 
+                                                     log(prev.bk.count, base = 2) > logFC.thres) {
+                                                   act.flag <- 1
+                                                 }
+                                               }
+                                             }
+                                             if (act.flag == 1) {
+                                               return(df)
+                                             }
+                                           }
+                                         })
   }
-  act.df.pattern<-do.call(rbind,act.list)
+  act.df.pattern <- do.call(rbind, act.list)
 
   # Apply EnrichR for the up-regulated genes
   enrichr.act.t.genes.go<-list()
   for(i in 1:length(act.list)){
     list.name<-names(act.list)[i]
     cat("Processing up-regulated pathways (enrichR) for time window ", list.name, "\n")
-    act.genes<-act.list[[i]]$Gene
-    # Convert ID to symbol
-    if(OrgDb == "org.Mm.eg.db" & id.ensembl == TRUE){
-      act.genes <- mapIds(org.Mm.eg.db, keys = act.genes, keytype = "ENSEMBL", column="SYMBOL")
-      act.genes <- as.character(act.genes[!is.na(act.genes)])
-    }else if(OrgDb == "org.Hg.eg.db"& id.ensembl == TRUE){
-      act.genes <- mapIds(org.Hg.eg.db, keys = act.genes, keytype = "ENSEMBL", column="SYMBOL")
-      act.genes <- as.character(act.genes[!is.na(act.genes)])
-    } else{stop("TrendCatcher only support Human and Mouse ID conversion from ENSEMBL to SYMBOL. \n")}
-    enriched <- enrichr(act.genes, dbs)
-    enrichr.act.t.genes.go[[list.name]]<-enriched[[1]]
-    rm(enriched)
+    act.genes<-act.list[[i]]$Symbol
+    act.genes<-unique(act.genes[act.genes!=""])
+    # Make sure it is human or mouse
+    if(OrgDb != "org.Mm.eg.db" & OrgDb != "org.Hs.eg.db"){
+      stop("TrendCatcher only support Human and Mouse ID conversion from ENSEMBL to SYMBOL. \n")
+    } else{
+      enriched <- enrichr(act.genes, databases = dbs)
+      enrichr.act.t.genes.go[[list.name]]<-enriched[[1]]
+      rm(enriched)
+    }
   }
   enrichr.act.top.go.list<-list()
   for(i in 1:length(enrichr.act.t.genes.go)){
@@ -128,64 +149,71 @@ draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 1, top.n = 10, dyn
 
   ### 5. Down-regulated pathways
   # Loop by time window to filter out genes going up within each time window
-  deact.list<-list()
-  for(i in 1:(length(t.arr)-1)){
-    # Get time range
-    start.t.thres<-t.arr[i]
-    end.t.thres<-t.arr[i+1]
-    list.name<-paste0(start.t.thres,t.unit,"-", end.t.thres, t.unit)
-    cat("Processing down-regulated genes for time window ", list.name, "\n")
-    # For each gene check if it activated within the time range
-    deact.list[[list.name]]<-plyr::ddply(dyn.gene.pattern, .(Gene), function(df){
-      idx<-grep("down", str_split(df$pattern,"_", simplify = T))
-      if(length(idx)!=0){
-        start.idx<-as.numeric(str_split(df$start.idx, "_", simplify = T)[idx])
-        end.idx<-as.numeric(str_split(df$end.idx, "_", simplify = T)[idx])
-        start.t<-t.arr[start.idx]
-        end.t<-t.arr[end.idx]
-        act.flag<-0
-        # For each range need to check
-        for(j in 1:length(start.t)){
-          if(start.t[j]<=start.t.thres & end.t[j]>=end.t.thres){
-            # Make sure the end.t.thres logFC is larger than start.t.thres
-            data.trans<-master.list$fitted.count %>% filter(Gene == df$Gene)
-            end.t.thres.count<-data.trans$Fit.Count[which(data.trans$Time == end.t.thres)]
-            # start.t.thres.count need to be the previous bk value
-            bk.arr<-str_split(df$start.t, "_", simplify = T)[1,]
-            bk.arr<-as.numeric(bk.arr[-length(bk.arr)])
-            previous.bk.t<-max(bk.arr[bk.arr<=start.t.thres])
-            prev.bk.count<-data.trans$Fit.Count[which(data.trans$Time == previous.bk.t)]
-            if(log(prev.bk.count, base = 2)-log(end.t.thres.count, base = 2)>logFC.thres){
-              act.flag<-1
-            }
-          }
-        }
-        if(act.flag==1){
-          return(df)
-        }
-      }
-    })
+  ### 7. Down-regulated pathways genes
+  deact.list <- list()
+  for (i in 1:(length(t.arr) - 1)) {
+    start.t.thres <- t.arr[i]
+    end.t.thres <- t.arr[i + 1]
+    list.name <- paste0(start.t.thres, t.unit, "-", end.t.thres, 
+                        t.unit)
+    cat("Processing down-regulated genes for time window ", 
+        list.name, "\n")
+    deact.list[[list.name]] <- plyr::ddply(dyn.gene.pattern, 
+                                           .(Gene), function(df) {
+                                             idx <- grep("down", str_split(df$pattern, "_", 
+                                                                           simplify = T))
+                                             if (length(idx) != 0) {
+                                               start.idx <- as.numeric(str_split(df$start.idx, 
+                                                                                 "_", simplify = T)[idx])
+                                               end.idx <- as.numeric(str_split(df$end.idx, 
+                                                                               "_", simplify = T)[idx])
+                                               start.t <- t.arr[start.idx]
+                                               end.t <- t.arr[end.idx]
+                                               act.flag <- 0
+                                               for (j in 1:length(start.t)) {
+                                                 if (start.t[j] <= start.t.thres & end.t[j] >= 
+                                                     end.t.thres) {
+                                                   data.trans <- master.list$fitted.count %>% 
+                                                     filter(Gene == df$Gene)
+                                                   end.t.thres.count <- data.trans$Fit.Count[which(data.trans$Time == 
+                                                                                                     end.t.thres)]
+                                                   bk.arr <- str_split(df$start.t, "_", simplify = T)[1, 
+                                                   ]
+                                                   bk.arr <- as.numeric(bk.arr[-length(bk.arr)])
+                                                   previous.bk.t <- max(bk.arr[bk.arr <= 
+                                                                                 start.t.thres])
+                                                   prev.bk.count <- data.trans$Fit.Count[which(data.trans$Time == 
+                                                                                                 previous.bk.t)]
+                                                   if (log(prev.bk.count, base = 2) - log(end.t.thres.count, 
+                                                                                          base = 2) > logFC.thres) {
+                                                     act.flag <- 1
+                                                   }
+                                                 }
+                                               }
+                                               if (act.flag == 1) {
+                                                 return(df)
+                                               }
+                                             }
+                                           })
   }
-  deact.df.pattern<-do.call(rbind,deact.list)
+  deact.df.pattern <- do.call(rbind, deact.list)
 
   # Apply EnrichR for the down-regulated genes
   enrichr.deact.t.genes.go<-list()
   for(i in 1:length(deact.list)){
     list.name<-names(deact.list)[i]
     cat("Processing down-regulated pathways (enrichR) for time window ", list.name, "\n")
-    deact.genes<-deact.list[[i]]$Gene
+    deact.genes<-deact.list[[i]]$Symbol
+    deact.genes<-unique(deact.genes[deact.genes!=""])
 
     # Convert ID to symbol
-    if(OrgDb == "org.Mm.eg.db"){
-      deact.genes <- mapIds(org.Mm.eg.db, keys = deact.genes, keytype = "ENSEMBL", column="SYMBOL")
-      deact.genes <- as.character(deact.genes[!is.na(deact.genes)])
-    }else if(OrgDb == "org.Hg.eg.db"){
-      deact.genes <- mapIds(org.Hg.eg.db, keys = deact.genes, keytype = "ENSEMBL", column="SYMBOL")
-      deact.genes <- as.character(deact.genes[!is.na(deact.genes)])
-    } else{stop("TrendCatcher only support Human and Mouse ID conversion from ENSEMBL to SYMBOL. \n")}
-
-    enriched <- enrichr(deact.genes, dbs)
-    enrichr.deact.t.genes.go[[list.name]]<-enriched[[1]]
+    if(OrgDb != "org.Mm.eg.db" & OrgDb!="org.Hs.eg.db"){
+      stop("TrendCatcher only support Human and Mouse ID conversion from ENSEMBL to SYMBOL. \n")
+    } else{
+      enriched <- enrichr(deact.genes, dbs)
+      enrichr.deact.t.genes.go[[list.name]]<-enriched[[1]]
+      rm(enriched)
+    }
   }
 
   enrichr.deact.top.go.list<-list()
@@ -201,7 +229,7 @@ draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 1, top.n = 10, dyn
   enrichr.deact.top.go<-enrichr.deact.top.go[!is.na(enrichr.deact.top.go$Term),]
 
   # Combine the go
-  enrichr.merge.df<-rbind(enrichr.act.top.go, enrichr.deact.top.go)
+  enrichr.merge.df<-rbind(enrichr.act.top.go, enrichr.deact.top.go) ############ Contain all GOs enriched 
   act.topn.term<-NULL
   for(i in 1:length(unique(enrichr.act.top.go$t.name))){
     t.name.i<-as.character(unique(enrichr.act.top.go$t.name)[i])
@@ -227,47 +255,173 @@ draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 1, top.n = 10, dyn
   deact.topn.term<-unique(deact.topn.term)
 
   go.term<-unique(c(act.topn.term, deact.topn.term))
-  cat("Identified", length(go.term), "GO terms for Time Heatmap (enrichR).", "\n")
+cat("Identified", length(go.term), "GO terms for Time Heatmap (enrichR).", "\n")
 
-  dynamic.df<-enrichr.merge.df %>% filter(Term %in% go.term)
-  dynamic.df$Term<-str_wrap(dynamic.df$Term, width = term.width)
-
-  dynamic.df$Term<-factor(dynamic.df$Term, levels = unique(dynamic.df$Term))
-  dynamic.df$t.name<-factor(dynamic.df$t.name, levels = unique(dynamic.df$t.name))
-  nom<-as.numeric(str_split(dynamic.df$Overlap, "/", simplify = T)[,1])
-  denom<-as.numeric(str_split(dynamic.df$Overlap, "/", simplify = T)[,2])
-  dynamic.df$NewRatio.num<-paste0(round(nom*100/denom,1), "%")
-
-  data1<-dynamic.df %>% filter(type == "Activation")
-  data2<-dynamic.df %>% filter(type == "Deactivation")
-
-  data1$Term<-as.character(data1$Term)
-  data1$Term<-factor(data1$Term, levels = unique(dynamic.df$Term))
-  data1$t.name<-factor(data1$t.name, levels = unique(dynamic.df$t.name))
-
-  data2$Term<-as.character(data2$Term)
-  data2$Term<-factor(data2$Term, levels = unique(dynamic.df$Term))
-  data2$t.name<-factor(data2$t.name, levels=unique(dynamic.df$t.name))
-
-  heatmap.plot.enrichR<-ggplot() +
-    geom_tile(data = data1, aes(x=t.name, y = reorder(Term, plyr::desc(Term)), fill =  Adjusted.P.value), size = 0.2, color = "grey") +
-    geom_text(data = data1, aes(x=t.name, y = reorder(Term, plyr::desc(Term)), label = NewRatio.num)) +
-    scale_fill_gradient2(low="red",high="white", name = "Up pathway p.adj", trans="log") +
-    new_scale_fill() +
-    geom_tile(data = data2, aes(x=t.name, y = reorder(Term, plyr::desc(Term)), fill = Adjusted.P.value), size = 0.2, color = "grey") +
-    geom_text(data = data2, aes(x=t.name, y = reorder(Term, plyr::desc(Term)),label = NewRatio.num)) +
-    scale_fill_gradient2(low="blue",high="white", name = "Down pathway p.adj", trans = "log") +
-    scale_x_discrete(position = "top", limits=levels(dynamic.df$t.name)) + xlab(paste0(figure.title, "\n")) + ylab("") +
-    theme(axis.text=element_text(size=12),
-          axis.title=element_text(size=14,face="bold")) +
-    scale_y_discrete(limits=rev(levels(dynamic.df$Term)))
-
-  colnames(enrichr.merge.df)<-c("Description", "Adjusted.P.value", "Overlap","Combined.Score", "geneID", "t.name", "type")
-
-  if(is.na(save.pdf.path)){
-    print(heatmap.plot.enrichR)
-  } else{
-    ggsave(heatmap.plot.enrichR, filename = save.pdf.path, width = pdf.width, height = pdf.height)
+##################### For each go, calculate average logFC t-t-1 to define the break point of GO #########
+logFC.mean.arr<-NULL
+sub.merge.df<-enrichr.merge.df %>% filter(Term %in% go.term)
+#### Calculate log2FC within each time window for each GO
+GO.list<-list()
+counter<-1
+for(i in 1:length(go.term)){
+  # each GO
+  go.i<-go.term[i]
+  # for each GO, get candidate up and down genes
+  sub.merge.df<-enrichr.merge.df %>% filter(Term == go.i)
+  for(j in 1:(length(t.arr)-1)){
+    # each time window
+    start.t.thres <- t.arr[j]
+    end.t.thres <- t.arr[j + 1]
+    list.name <- paste0(start.t.thres, t.unit, "-", end.t.thres, 
+                        t.unit)
+    sub.t<-sub.merge.df %>% filter(t.name == list.name) # 0 row, 1 row up/down, 2 row mix
+    if(nrow(sub.t)!=0){
+      sub.t.up<-sub.t %>% filter(type == "Activation")
+      sub.t.down<-sub.t %>% filter(type == "Deactivation")
+      if(nrow(sub.t.up)!=0){
+        n_up<-as.numeric(str_split(sub.t.up$Overlap, "/", simplify = T)[1])
+        geneID_up<-sub.t.up$Genes
+        p.adjust.up<-sub.t.up$Adjusted.P.value
+        sel.genes.up<-paste0(str_split(sub.t.up$Genes, ";", simplify = T))
+        sel.genes.up<-unique(sel.genes.up[sel.genes.up!=""])
+        master.list$fitted.count$Symbol<-master.list$master.table$Symbol[match(master.list$fitted.count$Gene, master.list$master.table$Gene)]
+        logFC.arr.up<-NULL
+        for(k in 1:length(sel.genes.up)){
+          # fitted count change
+          gene.i<-sel.genes.up[k]
+          gene.i <-paste0('^',gene.i,'$')
+          count.df<-master.list$fitted.count %>% filter(grepl(gene.i, Symbol, ignore.case = TRUE))
+          logFC<-log(count.df$Fit.Count[which(count.df$Time == end.t.thres)], 2) - log(count.df$Fit.Count[which(count.df$Time == start.t.thres)],2)
+          logFC.arr.up<-c(logFC.arr.up, logFC)
+        }
+        logFC.arr.up<-logFC.arr.up[logFC.arr.up>0]
+      }else{
+        n_up<-0
+        geneID_up<-""
+        p.adjust.up<-""
+        logFC.arr.up<-NULL
+      }
+      if(nrow(sub.t.down)!=0){
+        n_down<-as.numeric(str_split(sub.t.down$Overlap, "/", simplify = T)[1])
+        geneID_down<-sub.t.down$Genes
+        p.adjust.down<-sub.t.down$Adjusted.P.value
+        sel.genes.down<-paste0(str_split(sub.t.down$Genes, ";", simplify = T))
+        sel.genes.down<-unique(sel.genes.down[sel.genes.down!=""])
+        master.list$fitted.count$Symbol<-master.list$master.table$Symbol[match(master.list$fitted.count$Gene, master.list$master.table$Gene)]
+        logFC.arr.down<-NULL
+        for(k in 1:length(sel.genes.down)){
+          # fitted count change
+          gene.i<-sel.genes.down[k]
+          gene.i <-paste0('^',gene.i,'$')
+          count.df<-master.list$fitted.count %>% filter(grepl(gene.i, Symbol, ignore.case = TRUE))
+          logFC<-log(count.df$Fit.Count[which(count.df$Time == end.t.thres)], 2) - log(count.df$Fit.Count[which(count.df$Time == start.t.thres)],2)
+          logFC.arr.down<-c(logFC.arr.down, logFC)
+        }
+        logFC.arr.down<-logFC.arr.down[logFC.arr.down<0]
+      }else{
+        n_down<-0
+        geneID_down<-""
+        p.adjust.down<-""
+        logFC.arr.down<-NULL
+      }
+      logFC.arr<-c(logFC.arr.up, logFC.arr.down)
+      
+      logFC.mean<-mean(logFC.arr)
+      direction<-ifelse(logFC.mean>0, "Activation", "Deactivation")
+      GO.list[[counter]]<-data.frame(ID = sub.merge.df$Term[1], Description = go.i, t.name = list.name, direction = direction, 
+                                     Avg_log2FC = logFC.mean, n_total = n_up+n_down, 
+                                     n_background = as.numeric(str_split(sub.merge.df$Overlap, "/", simplify = T)[1,2]),
+                                     n_up = n_up, n_down = n_down, geneID_up = geneID_up, geneID_down = geneID_down, 
+                                     p.adjust.up = p.adjust.up, p.adjust.down = p.adjust.down)
+      counter<-counter+1
+    }
   }
-  return(list(time.heatmap = heatmap.plot.enrichR, merge.df = enrichr.merge.df))
+}
+GO.df<-do.call(rbind, GO.list)
+GO.df.info<-ddply(GO.df, .(Description), function(df){
+  up.genes<-as.character(str_split(df$geneID_up, ";", simplify = T))
+  up.genes<-up.genes[up.genes!=""]
+  down.genes<-as.character(str_split(df$geneID_down, ";", simplify = T))
+  down.genes<-down.genes[down.genes!=""]
+  nDDEG<-length(unique(c(up.genes, down.genes)))
+  DDEGs<-paste0(unique(c(up.genes, down.genes)), "/", collapse = "")
+  return(data.frame(nDDEG = nDDEG, DDEGs = DDEGs))
+})
+GO.df$nDDEG<-GO.df.info$nDDEG[match(GO.df$Description, GO.df.info$Description)]
+GO.df$DDEGs<-GO.df.info$DDEGs[match(GO.df$Description, GO.df.info$Description)]
+GO.df$perc<-GO.df$nDDEG/GO.df$n_background  ####### GO.df contains log2FC for each selected GO!!!!!!
+
+
+################# Prepare for complex heatmap ###############
+start.t.arr<-paste0(t.arr[1:(length(t.arr)-1)], t.unit)
+end.t.arr<-paste0(t.arr[2:length(t.arr)],t.unit)
+col.name.order<-paste0(start.t.arr, "-", end.t.arr)
+
+################# Prepare mat1 
+sub.GO.df<-GO.df[,c("Description", "t.name", "Avg_log2FC", "nDDEG", "n_background")]
+sub.GO.mat<-dcast(sub.GO.df, formula = Description~t.name, value.var = "Avg_log2FC")
+sub.GO.mat<-sub.GO.mat[,c("Description",col.name.order)]
+sub.GO.mat<-sub.GO.mat[match(unique(GO.df$Description), sub.GO.mat$Description),]
+rownames(sub.GO.mat)<-sub.GO.mat$Description
+sub.GO.mat$Description<-NULL
+sub.GO.mat<-as.matrix(round(sub.GO.mat,2))
+sub.GO.mat<-sub.GO.mat[order(sub.GO.mat[,1], decreasing = T),]
+
+text.GO.mat<-sub.GO.mat
+text.GO.mat<-replace(text.GO.mat, is.na(text.GO.mat), "")
+
+col_fun<-colorRamp2(c(-2, 0, 2), c("blue", "white", "red"))
+
+################# Prepare mat2
+mat2<-sub.GO.df$nDDEG[match(rownames(sub.GO.mat), sub.GO.df$Description)]/sub.GO.df$n_background[match(rownames(sub.GO.mat), sub.GO.df$Description)]
+mat2<-as.matrix(round(mat2*100,1))
+colnames(mat2)<-"%GO"
+rownames(mat2)<-rownames(sub.GO.mat)
+col_fun2 = colorRamp2(c(min(mat2),max(mat2)), c("white", "grey"))
+
+################# Prepare mat3
+mat3<-as.matrix(sub.GO.df$nDDEG[match(rownames(sub.GO.mat), sub.GO.df$Description)])
+colnames(mat3)<-"nDDEG"
+rownames(mat3)<-rownames(sub.GO.mat)
+col_fun3 = colorRamp2(c(min(mat3),max(mat3)), c("white", "grey"))
+
+############### Wrap super long row names
+rownames(sub.GO.mat)<-str_wrap(rownames(sub.GO.mat), width = term.width)
+rownames(mat2)<-str_wrap(rownames(mat2), width = term.width)
+rownames(mat3)<-str_wrap(rownames(mat3), width = term.width)
+
+h1<-Heatmap(sub.GO.mat, na_col = "transparent", cluster_rows = F, cluster_columns = F, 
+            row_names_side = "left", column_names_side = "top", column_names_rot = 45, column_names_centered = T,
+            rect_gp = gpar(col = "black", lwd = 0.5), row_names_max_width = unit(80, "cm"),
+            name = "Ave_log2FC", col = col_fun,
+            cell_fun = function(j, i, x, y, w, h, col) { # add text to each grid
+              grid.text(text.GO.mat[i,j], x, y)
+            })
+h2<-Heatmap(mat2, na_col = "transparent", cluster_rows = F, cluster_columns = F, show_row_names = F,
+            column_names_side = "top", column_names_rot = 0, column_names_centered = T,
+            rect_gp = gpar(col = "black", lwd = 0.5), 
+            show_heatmap_legend = F, col = col_fun2,
+            cell_fun = function(j, i, x, y, w, h, col) { # add text to each grid
+              grid.text(mat2[i,j], x, y)
+            })
+
+h3<-Heatmap(mat3, na_col = "transparent", cluster_rows = F, cluster_columns = F, show_row_names = F,
+            column_names_side = "top", column_names_rot = 0, column_names_centered = T,
+            rect_gp = gpar(col = "black", lwd = 0.5), 
+            show_heatmap_legend = F, col = col_fun3,
+            cell_fun = function(j, i, x, y, w, h, col) { # add text to each grid
+              grid.text(mat3[i,j], x, y)
+            })
+
+p<-h1+h2+h3
+p<-draw(p, column_title = figure.title,
+        column_title_gp = gpar(fontsize = 16))
+if(is.na(save.tiff.path)){
+  print(p)
+} else{
+  tiff(filename = save.tiff.path, res = tiff.res, width = tiff.width, height = tiff.height)
+  print(p)
+  dev.off()
+}
+return(list(time.heatmap = p, merge.df = enrichr.merge.df, GO.df = GO.df))
 }

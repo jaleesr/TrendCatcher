@@ -36,8 +36,8 @@
 #'
 #'
 
-draw_GOHeatmap<-function(master.list, time.window="", go.terms="", id.ensembl = TRUE, merge.df=NA, logFC.thres=2,
-                         save.as.PDF = NA, pdf.width = 7, pdf.height=15){
+draw_GOHeatmap<-function(master.list, time.window="", go.terms="",
+                         merge.df=NA, logFC.thres=2, figure.title = "", save.tiff.path = NA, tiff.res = 100, tiff.width = 1500, tiff.height =1500){
   if(!is.data.frame(merge.df)){stop("Merge.df missing!!!")}
   if(!time.window %in% merge.df$t.name){stop("Time window format is wrong!!!")}
   if(length(go.terms)==0){stop("Please enter multiple go.terms!!!")}
@@ -54,14 +54,14 @@ draw_GOHeatmap<-function(master.list, time.window="", go.terms="", id.ensembl = 
     # For each gene, go find the prev. bk's value
     for(i in 1:length(id.arr)){
       gene.name<-id.arr[i]
-      gene.dyn.info<-master.list$master.table %>% filter(Gene == gene.name)
+      gene.dyn.info<-master.list$master.table %>% filter(Symbol == gene.name)
       dyn.t.arr<-str_split(master.list$master.table$dynTime, "_", simplify = T)
       dyn.t.arr<-as.numeric(dyn.t.arr[-length(dyn.t.arr)])
       idx<-which(dyn.t.arr < end.t)
       if(length(idx)==0){prev.bk.t<-0}else{prev.bk.t<-dyn.t.arr[max(idx)]}
       prev.bk.t.arr<-c(prev.bk.t.arr, prev.bk.t)
       # Get the count value for end.t and prev.t
-      gene.count.df<-master.list$fitted.count %>% filter(Gene == gene.name)
+      gene.count.df<-master.list$fitted.count %>% filter(Symbol == gene.name)
       prev.bk.count<-gene.count.df$Fit.Count[which(gene.count.df$Time == prev.bk.t)]
       end.t.count<-gene.count.df$Fit.Count[which(gene.count.df$Time == end.t)]
       logFC <- log(end.t.count, base = 2) - log(prev.bk.count, base = 2)
@@ -69,15 +69,9 @@ draw_GOHeatmap<-function(master.list, time.window="", go.terms="", id.ensembl = 
     }
     data.frame(gene = id.arr, logFC.prev.bk = logFC.arr, prev.bk.t = prev.bk.t)
   })
-  if(id.ensembl == TRUE){
-    symbol.arr<-get_GeneEnsembl2Symbol(term.gene.df$gene)
-    symbol.df<-symbol.arr[match(term.gene.df$gene, symbol.arr$Gene),2:3]
-    term.gene.df.symbol<-cbind(term.gene.df, symbol.df)
-    term.gene.df.symbol<-term.gene.df.symbol %>% filter(abs(logFC.prev.bk) > logFC.thres)
-  } else{
+
     term.gene.df.symbol <- cbind(term.gene.df, Symbol = term.gene.df$gene)
     term.gene.df.symbol<-term.gene.df.symbol %>% filter(abs(logFC.prev.bk) > logFC.thres)
-  }
 
 
 
@@ -121,10 +115,10 @@ draw_GOHeatmap<-function(master.list, time.window="", go.terms="", id.ensembl = 
               show_heatmap_legend = T, column_names_rot = 45, column_names_side = "top", row_names_side = "left",
               row_names_gp = gpar(fontsize = 10))
 
-  if(is.na(save.as.PDF)){
+  if(is.na(save.tiff.path)){
     print(ht)
   } else{
-    pdf(file = save.as.PDF, width = pdf.width, height = pdf.height)
+    tiff(filename = save.tiff.path, res = tiff.res, width = tiff.width, height = tiff.height)
     print(ht)
     dev.off()
   }

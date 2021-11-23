@@ -16,20 +16,36 @@ demo.master.list.path<-system.file("extdata", "BrainMasterList.rda", package = "
 load(demo.master.list.path)
 ```
 
+To run TimeHeatmap function, the master.table must include "Symbol" column with gene symbols.
+
+```{r}
+gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
+master.table.new<-cbind(master.list$master.table, gene.symbol.df[match(master.list$master.table$Gene, gene.symbol.df$Gene), c("Symbol", "description")])
+master.list$master.table<-master.table.new
+head(master.list$master.table)
+```
+```{r}
+### ONLY use this command if CSV file is using GENE SYMBOL as row name!!!!!!
+#master.list$master.table$Symbol<-master.list$master.table$Gene 
+```
 
 #### 3. Use GO enrichment analysis to construct Time-Heatmap
 
 To draw Time-Heatmap using GO database, please use draw_TimeHeatmap_GO function. This function will return a list composed of a TimeHeatmap plot and a merge.df dataframe. Due to the limited size of Time-Heatmap for visualization, users can play with merge.df which includes all the GO enrichment analysis for each time window. 
 
 ```{r, echo=FALSE, fig.height=15, fig.width=15}
-GO.time.df<-draw_TimeHeatmap_GO(master.list = master.list, logFC.thres = 1, top.n = 10, dyn.gene.p.thres = 0.05,
-                              keyType = "ENSEMBL", OrgDb = "org.Mm.eg.db", ont = "BP", term.width = 80,
-                              GO.enrich.p = 0.05, figure.title = "", save.pdf.path = NA, pdf.width = 15, pdf.height =15)
+if(FALSE){
+time_heatmap<-draw_TimeHeatmap_GO(master.list = master.list, logFC.thres = 0, top.n = 10, dyn.gene.p.thres = 0.05, keyType = "SYMBOL", OrgDb = "org.Mm.eg.db", ont = "BP", term.width = 80, GO.enrich.p = 0.05, figure.title = "TimeHeatmap")  
+}
 ```
 
 The full version of GO enrichment output. 
 
 ```{r}
+# To save time, directely load from extdata
+demo.time.heatmap.path<-system.file("extdata", "Brain_TimeHeatmap.rda", package = "TrendCatcher")
+load(demo.time.heatmap.path)
+
 GO.time.df$merge.df[1:5, 1:5]
 ```
 

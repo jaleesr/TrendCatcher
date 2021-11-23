@@ -59,7 +59,7 @@ Use hierachical pie chart to visulaize gene trajectory master-pattern and sub-pa
 This is useful when comparing two or more projects. 
 
 ```{r, fig.height=7}
-draw_TrajClusterPie(master.list = master.list,inner.radius = 0.7, cex.out = 1, cex.in = 1, fig.title = "Brain EC")
+draw_TrajClusterPie(master.list = master.list,inner.radius = 0.7, cex.out = 1, cex.in = 1, fig.title = "Hierarchical Pie Chart")
 ```
 
 
