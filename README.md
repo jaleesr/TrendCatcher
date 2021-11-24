@@ -90,6 +90,6 @@ To build the Time-Heatmap for visualize the biological pathway enrichment change
 over time, we designed a window-sliding strategy to capture all the up-regulated or 
 down-regulated genes for each time interval.
 
-![plot](./figures/Full_TimeHeatmap.tiff)
+![plot](./figures/Full_TimeHeatmap.png)
 
 
