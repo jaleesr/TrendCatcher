@@ -41,6 +41,9 @@ draw_GOHeatmap<-function(master.list, time.window="", go.terms="",
   if(!is.data.frame(merge.df)){stop("Merge.df missing!!!")}
   if(!time.window %in% merge.df$t.name){stop("Time window format is wrong!!!")}
   if(length(go.terms)==0){stop("Please enter multiple go.terms!!!")}
+  
+  #### Add symbol to fitted.count
+  master.list$fitted.count$Symbol<-master.list$master.table$Symbol[match(master.list$fitted.count$Gene, master.list$master.table$Gene)]
 
   # get each term gene
   sub.merge.df<-merge.df %>% filter(Description %in% go.terms & t.name == time.window)

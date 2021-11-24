@@ -45,21 +45,54 @@ The full version of GO enrichment output.
 # To save time, directely load from extdata
 demo.time.heatmap.path<-system.file("extdata", "Brain_TimeHeatmap.rda", package = "TrendCatcher")
 load(demo.time.heatmap.path)
-
-GO.time.df$merge.df[1:5, 1:5]
+names(time_heatmap)
 ```
 
-#### 4. Look at Genes candidates from picked enriched GO terms.
+
+Print out TimeHeatmap from the time_heatmap list object. 
+```{r}
+print(time_heatmap$time.heatmap)
+```
+
+Check all the enriched GO terms. 
+
+```{r}
+head(time_heatmap$merge.df)
+```
+
+Check top enriched GO terms average log2FC within each time window. 
+```{r}
+head(time_heatmap$GO.df)
+```
+
+#### 4. Time-Heatmap with non-redundant GO terms.
+
+Sometimes GO terms are redundant, users can select manually non-redundant GOs using function below.
+```{r}
+go.terms<-unique(time_heatmap$GO.df$Description)[1:5]
+time_heatmap_selGO<-draw_TimeHeatmap_selGO(time_heatmap = time_heatmap, sel.go = go.terms, master.list = master.list, GO.perc.thres = 0, nDDEG.thres = 0)
+print(time_heatmap_selGO$time.heatmap)
+```
+
+#### 5. Look at Genes candidates from picked enriched GO terms.
 
 To look at which genes are involved within the TimeHeatmap above. We can call draw_GOHeatmap function. 
 This function is useful when one is comparing multiple projects. 
 
-```{r, fig.height=20, fig.width=7}
-go.terms<-c("regulation of defense response", "leukocyte migration", "myeloid leukocyte migration", "leukocyte chemotaxis",
- "granulocyte chemotaxis", "cellular response to chemokine", "chemokine-mediated signaling pathway", "angiogenesis", "sprouting angiogenesis",  "respone to bacterium", "leukocyte mediated immunity")
-gene.GO.df<-draw_GOHeatmap(master.list = master.list, time.window = "0h-6h", go.terms = go.terms, id.ensembl = TRUE, merge.df = GO.time.df$merge.df, 
-                           logFC.thres = 2)
-
+```{r, fig.height=10, fig.width=7}
+go.terms<-c("response to lipopolysaccharide",
+            "response to interferon-beta",
+            "cytokine-mediated signaling pathway",
+            "response to interferon-gamma",
+            "response to virus",
+            "leukocyte migration",
+            "mitotic nuclear division",
+            "regulation of vasculature development",
+            "extracellular structure organization",
+            "regulation of epithelial cell proliferation")
+gene.GO.df<-draw_GOHeatmap(master.list = master.list, time.window = "0h-6h", 
+                           go.terms = go.terms,  merge.df = time_heatmap$merge.df, 
+                           logFC.thres = 5)
 ```
 
 The data.frame gene.GO.df contains all the genes we found through TrendCatcher without logFC threshold.

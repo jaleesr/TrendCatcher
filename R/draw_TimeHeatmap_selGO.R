@@ -1,3 +1,17 @@
+#' Subset TimeHeatmap
+#' @examples
+#' \dontrun{
+#' example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+#' load(example.file.path)
+#' th.obj<-draw_TimeHeatmap_GO(master.list = master.list)
+#' print(th.obj$time.heatmap)
+#' head(th.obj$merge.df)
+#' }
+#' @export
+#'
+#'
+
+
 draw_TimeHeatmap_selGO<-function(time_heatmap, sel.go, master.list, GO.perc.thres =0, nDDEG.thres = 0, figure.title = "",save.tiff.path = NA, tiff.res = 100, tiff.width = 1500, tiff.height =1500){
   if(FALSE){
     # for test only
