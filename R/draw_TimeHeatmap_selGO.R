@@ -1,18 +1,13 @@
 #' Subset TimeHeatmap
-#' @examples
-#' \dontrun{
-#' example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
-#' load(example.file.path)
-#' th.obj<-draw_TimeHeatmap_GO(master.list = master.list)
-#' print(th.obj$time.heatmap)
-#' head(th.obj$merge.df)
-#' }
+#' 
 #' @export
 #'
 #'
 
 
-draw_TimeHeatmap_selGO<-function(time_heatmap, sel.go, master.list, GO.perc.thres =0, nDDEG.thres = 0, figure.title = "",save.tiff.path = NA, tiff.res = 100, tiff.width = 1500, tiff.height =1500){
+draw_TimeHeatmap_selGO<-function(time_heatmap, sel.go, master.list, GO.perc.thres =0, nDDEG.thres = 0, 
+                                 term.width = 80, figure.title = "",
+                                 save.tiff.path = NA, tiff.res = 100, tiff.width = 1500, tiff.height =1500){
   if(FALSE){
     # for test only
     sel.go<-c("response to lipopolysaccharide",
@@ -94,8 +89,6 @@ draw_TimeHeatmap_selGO<-function(time_heatmap, sel.go, master.list, GO.perc.thre
               })
   
   p<-h1+h2+h3
-  p<-draw(p, column_title = figure.title,
-          column_title_gp = gpar(fontsize = 16))
   if(is.na(save.tiff.path)){
     print(p)
   } else{

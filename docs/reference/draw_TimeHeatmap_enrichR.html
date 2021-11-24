@@ -140,14 +140,14 @@ analysis.</p>
   top.n <span class='op'>=</span> <span class='fl'>10</span>,
   dyn.gene.p.thres <span class='op'>=</span> <span class='fl'>0.05</span>,
   dbs <span class='op'>=</span> <span class='st'>"BioPlanet_2019"</span>,
-  id.ensembl <span class='op'>=</span> <span class='cn'>TRUE</span>,
   term.width <span class='op'>=</span> <span class='fl'>80</span>,
   OrgDb <span class='op'>=</span> <span class='st'>"org.Mm.eg.db"</span>,
   GO.enrich.p <span class='op'>=</span> <span class='fl'>0.05</span>,
   figure.title <span class='op'>=</span> <span class='st'>""</span>,
-  save.pdf.path <span class='op'>=</span> <span class='cn'>NA</span>,
-  pdf.width <span class='op'>=</span> <span class='fl'>13</span>,
-  pdf.height <span class='op'>=</span> <span class='fl'>15</span>
+  save.tiff.path <span class='op'>=</span> <span class='cn'>NA</span>,
+  tiff.res <span class='op'>=</span> <span class='fl'>100</span>,
+  tiff.width <span class='op'>=</span> <span class='fl'>1500</span>,
+  tiff.height <span class='op'>=</span> <span class='fl'>1500</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -179,11 +179,6 @@ will shown in Time-Heatmap.</p></td>
 By default is "BioPlanet_2019".</p></td>
     </tr>
     <tr>
-      <th>id.ensembl, </th>
-      <td><p>a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
-By default is TRUE.</p></td>
-    </tr>
-    <tr>
       <th>term.width, </th>
       <td><p>an integer variable. The character length for each GO term. If one GO term is super long, we can wrap
 it into term.width of strings into multiple rows. By default if 80.</p></td>
@@ -197,6 +192,15 @@ it into term.width of strings into multiple rows. By default if 80.</p></td>
       <td><p>a character variable. The main title of Time-Heatmap.</p></td>
     </tr>
     <tr>
+      <th>id.ensembl, </th>
+      <td><p>a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
+By default is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>ont, </th>
+      <td><p>one of "BP", "MF", and "CC" subontologies, or "ALL" for all three. By default is "BP".</p></td>
+    </tr>
+    <tr>
       <th>save.pdf.path, </th>
       <td><p>a character variable. If need to save the figure into PDF file. This must be an absolute
 file path. If not needed save as PDF file, set it to NA. By defualt iS NA.</p></td>
@@ -208,10 +212,6 @@ file path. If not needed save as PDF file, set it to NA. By defualt iS NA.</p></
     <tr>
       <th>pdf.height, </th>
       <td><p>a numeric variable. The height of PDF file. By default is 15.</p></td>
-    </tr>
-    <tr>
-      <th>ont, </th>
-      <td><p>one of "BP", "MF", and "CC" subontologies, or "ALL" for all three. By default is "BP".</p></td>
     </tr>
     </table>
 

@@ -136,12 +136,13 @@ And showing all the genes used for enrichment analysis and their logFC compared 
   <span class='va'>master.list</span>,
   time.window <span class='op'>=</span> <span class='st'>""</span>,
   go.terms <span class='op'>=</span> <span class='st'>""</span>,
-  id.ensembl <span class='op'>=</span> <span class='cn'>TRUE</span>,
   merge.df <span class='op'>=</span> <span class='cn'>NA</span>,
   logFC.thres <span class='op'>=</span> <span class='fl'>2</span>,
-  save.as.PDF <span class='op'>=</span> <span class='cn'>NA</span>,
-  pdf.width <span class='op'>=</span> <span class='fl'>7</span>,
-  pdf.height <span class='op'>=</span> <span class='fl'>15</span>
+  figure.title <span class='op'>=</span> <span class='st'>""</span>,
+  save.tiff.path <span class='op'>=</span> <span class='cn'>NA</span>,
+  tiff.res <span class='op'>=</span> <span class='fl'>100</span>,
+  tiff.width <span class='op'>=</span> <span class='fl'>1500</span>,
+  tiff.height <span class='op'>=</span> <span class='fl'>1500</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -156,11 +157,6 @@ And showing all the genes used for enrichment analysis and their logFC compared 
       <td><p>a character array. Must be an array of go terms from the merge.df$Description.</p></td>
     </tr>
     <tr>
-      <th>id.ensembl, </th>
-      <td><p>a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
-By default is TRUE.</p></td>
-    </tr>
-    <tr>
       <th>merge.df, </th>
       <td><p>a dataframe. The output dataframe from output list of draw_TimeHeatmap_GO or draw_TimeHeatmap_enrichR. Use $merge.df to obtain it.</p></td>
     </tr>
@@ -169,6 +165,15 @@ By default is TRUE.</p></td>
       <td><p>a numeric variable. The logFC threshold compared to each genes previous break point expression level.
 By default is 2, meaning for each gene, the current time window's expression level is 2-fold compared to previous
 break point's expression level.</p></td>
+    </tr>
+    <tr>
+      <th>time.windown, </th>
+      <td><p>a character. Must be one of the merge.df$t.name.</p></td>
+    </tr>
+    <tr>
+      <th>id.ensembl, </th>
+      <td><p>a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
+By default is TRUE.</p></td>
     </tr>
     <tr>
       <th>save.as.PDF, </th>
@@ -182,10 +187,6 @@ file path. If not needed save as PDF file, set it to NA. By default iS NA.</p></
     <tr>
       <th>pdf.height, </th>
       <td><p>a numeric variable. The height of PDF file. By default is 15.</p></td>
-    </tr>
-    <tr>
-      <th>time.windown, </th>
-      <td><p>a character. Must be one of the merge.df$t.name.</p></td>
     </tr>
     </table>
 

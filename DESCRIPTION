@@ -29,6 +29,7 @@ Depends:
     foreach (>= 1.5.0),
     biomaRt (>= 2.44.4),
     circlize (>= 0.4.10),
-    ComplexHeatmap (>= 2.4.3)
+    ComplexHeatmap (>= 2.4.3),
+    reshape2(>= 1.4.4)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

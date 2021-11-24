@@ -8,12 +8,13 @@ draw_GOHeatmap(
   master.list,
   time.window = "",
   go.terms = "",
-  id.ensembl = TRUE,
   merge.df = NA,
   logFC.thres = 2,
-  save.as.PDF = NA,
-  pdf.width = 7,
-  pdf.height = 15
+  figure.title = "",
+  save.tiff.path = NA,
+  tiff.res = 100,
+  tiff.width = 1500,
+  tiff.height = 1500
 )
 }
 \arguments{
@@ -21,14 +22,16 @@ draw_GOHeatmap(
 
 \item{go.terms, }{a character array. Must be an array of go terms from the merge.df$Description.}
 
-\item{id.ensembl, }{a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
-By default is TRUE.}
-
 \item{merge.df, }{a dataframe. The output dataframe from output list of draw_TimeHeatmap_GO or draw_TimeHeatmap_enrichR. Use $merge.df to obtain it.}
 
 \item{logFC.thres, }{a numeric variable. The logFC threshold compared to each genes previous break point expression level.
 By default is 2, meaning for each gene, the current time window's expression level is 2-fold compared to previous
 break point's expression level.}
+
+\item{time.windown, }{a character. Must be one of the merge.df$t.name.}
+
+\item{id.ensembl, }{a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
+By default is TRUE.}
 
 \item{save.as.PDF, }{a character variable. If need to save the figure into PDF file. This must be an absolute
 file path. If not needed save as PDF file, set it to NA. By default iS NA.}
@@ -36,8 +39,6 @@ file path. If not needed save as PDF file, set it to NA. By default iS NA.}
 \item{pdf.width, }{a numeric variable. The width of PDF file. By default is 13.}
 
 \item{pdf.height, }{a numeric variable. The height of PDF file. By default is 15.}
-
-\item{time.windown, }{a character. Must be one of the merge.df$t.name.}
 }
 \value{
 A list object, including elements names merge.df and time.heatmap.

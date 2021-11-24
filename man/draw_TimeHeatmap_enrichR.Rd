@@ -10,14 +10,14 @@ draw_TimeHeatmap_enrichR(
   top.n = 10,
   dyn.gene.p.thres = 0.05,
   dbs = "BioPlanet_2019",
-  id.ensembl = TRUE,
   term.width = 80,
   OrgDb = "org.Mm.eg.db",
   GO.enrich.p = 0.05,
   figure.title = "",
-  save.pdf.path = NA,
-  pdf.width = 13,
-  pdf.height = 15
+  save.tiff.path = NA,
+  tiff.res = 100,
+  tiff.width = 1500,
+  tiff.height = 1500
 )
 }
 \arguments{
@@ -36,9 +36,6 @@ will shown in Time-Heatmap.}
 \item{dbs, }{must one of the enrichR supported database name. To check the list, run dbs <- listEnrichrDbs() command.
 By default is "BioPlanet_2019".}
 
-\item{id.ensembl, }{a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
-By default is TRUE.}
-
 \item{term.width, }{an integer variable. The character length for each GO term. If one GO term is super long, we can wrap
 it into term.width of strings into multiple rows. By default if 80.}
 
@@ -46,14 +43,17 @@ it into term.width of strings into multiple rows. By default if 80.}
 
 \item{figure.title, }{a character variable. The main title of Time-Heatmap.}
 
+\item{id.ensembl, }{a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
+By default is TRUE.}
+
+\item{ont, }{one of "BP", "MF", and "CC" subontologies, or "ALL" for all three. By default is "BP".}
+
 \item{save.pdf.path, }{a character variable. If need to save the figure into PDF file. This must be an absolute
 file path. If not needed save as PDF file, set it to NA. By defualt iS NA.}
 
 \item{pdf.width, }{a numeric variable. The width of PDF file. By default is 13.}
 
 \item{pdf.height, }{a numeric variable. The height of PDF file. By default is 15.}
-
-\item{ont, }{one of "BP", "MF", and "CC" subontologies, or "ALL" for all three. By default is "BP".}
 }
 \value{
 A list object, including elements names merge.df and time.heatmap.

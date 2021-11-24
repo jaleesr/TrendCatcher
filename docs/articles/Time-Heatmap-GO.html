@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -75,8 +75,7 @@
 
       
 
-      </header><script src="Time-Heatmap-GO_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="Time-Heatmap-GO_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="Time-Heatmap-GO_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="Time-Heatmap-GO_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>3.Time-Heatmap-GO</h1>
@@ -99,61 +98,87 @@
 <h4 class="hasAnchor">
 <a href="#now-read-the-demo-master-list-" class="anchor"></a>2. Now read the demo master.list.</h4>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">demo.master.list.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"BrainMasterList.rda"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">demo.master.list.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"BrainMasterList_Symbol.rda"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="va">demo.master.list.path</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="use-go-enrichment-analysis-to-construct-time-heatmap" class="section level4">
 <h4 class="hasAnchor">
 <a href="#use-go-enrichment-analysis-to-construct-time-heatmap" class="anchor"></a>3. Use GO enrichment analysis to construct Time-Heatmap</h4>
 <p>To draw Time-Heatmap using GO database, please use draw_TimeHeatmap_GO function. This function will return a list composed of a TimeHeatmap plot and a merge.df dataframe. Due to the limited size of Time-Heatmap for visualization, users can play with merge.df which includes all the GO enrichment analysis for each time window.</p>
-<pre><code>## Processing up-regulated genes for time window  0h-6h 
-## Processing up-regulated genes for time window  6h-24h 
-## Processing up-regulated genes for time window  24h-48h 
-## Processing up-regulated genes for time window  48h-72h 
-## Processing up-regulated genes for time window  72h-168h 
-## Processing up-regulated pathways for time window  0h-6h 
-## Processing up-regulated pathways for time window  6h-24h 
-## Processing up-regulated pathways for time window  24h-48h 
-## Processing up-regulated pathways for time window  48h-72h 
-## Processing up-regulated pathways for time window  72h-168h 
-## Processing down-regulated genes for time window  0h-6h 
-## Processing down-regulated genes for time window  6h-24h 
-## Processing down-regulated genes for time window  24h-48h 
-## Processing down-regulated genes for time window  48h-72h 
-## Processing down-regulated genes for time window  72h-168h 
-## Processing down-regulated pathways for time window  0h-6h 
-## Processing down-regulated pathways for time window  6h-24h 
-## Processing down-regulated pathways for time window  24h-48h 
-## Processing down-regulated pathways for time window  48h-72h 
-## Processing down-regulated pathways for time window  72h-168h 
-## Identified 50 GO terms for Time Heatmap.</code></pre>
-<p><img src="Time-Heatmap-GO_files/figure-html/unnamed-chunk-3-1.png" width="1440"></p>
 <p>The full version of GO enrichment output.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">GO.time.df</span><span class="op">$</span><span class="va">merge.df</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></code></pre></div>
-<pre><code>##                          ID                              Description
-## 0h-6h.GO:0009617 GO:0009617                    response to bacterium
-## 0h-6h.GO:0045087 GO:0045087                   innate immune response
-## 0h-6h.GO:0031347 GO:0031347           regulation of defense response
-## 0h-6h.GO:0019221 GO:0019221      cytokine-mediated signaling pathway
-## 0h-6h.GO:0002237 GO:0002237 response to molecule of bacterial origin
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># To save time, directely load from extdata</span>
+<span class="va">demo.time.heatmap.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"Brain_TimeHeatmap.rda"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="va">demo.time.heatmap.path</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">time_heatmap</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] "time.heatmap" "merge.df"     "GO.df"</code></pre>
+<p>Print out TimeHeatmap from the time_heatmap list object.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">time_heatmap</span><span class="op">$</span><span class="va">time.heatmap</span><span class="op">)</span></code></pre></div>
+<p><img src="Time-Heatmap-GO_files/figure-html/unnamed-chunk-5-1.png" width="864"></p>
+<p>Check all the enriched GO terms.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">time_heatmap</span><span class="op">$</span><span class="va">merge.df</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<pre><code>##                          ID                                Description
+## 0h-6h.GO:0042254 GO:0042254                        ribosome biogenesis
+## 0h-6h.GO:0001819 GO:0001819 positive regulation of cytokine production
+## 0h-6h.GO:0022613 GO:0022613       ribonucleoprotein complex biogenesis
+## 0h-6h.GO:0019221 GO:0019221        cytokine-mediated signaling pathway
+## 0h-6h.GO:0050727 GO:0050727        regulation of inflammatory response
+## 0h-6h.GO:0009615 GO:0009615                          response to virus
 ##                      p.adjust GeneRatio   BgRatio
-## 0h-6h.GO:0009617 6.902686e-51   106/569 444/14565
-## 0h-6h.GO:0045087 1.111327e-48   106/569 469/14565
-## 0h-6h.GO:0031347 2.475243e-32    85/569 446/14565
-## 0h-6h.GO:0019221 4.847339e-30    64/569 265/14565
-## 0h-6h.GO:0002237 6.369956e-29    59/569 232/14565</code></pre>
+## 0h-6h.GO:0042254 4.797111e-34   84/1268 294/23355
+## 0h-6h.GO:0001819 9.136232e-29   97/1268 452/23355
+## 0h-6h.GO:0022613 6.541570e-27   89/1268 408/23355
+## 0h-6h.GO:0019221 4.570376e-25   82/1268 372/23355
+## 0h-6h.GO:0050727 1.076822e-24   78/1268 344/23355
+## 0h-6h.GO:0009615 2.417513e-24   72/1268 300/23355</code></pre>
+<p>Check top enriched GO terms average log2FC within each time window.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">time_heatmap</span><span class="op">$</span><span class="va">GO.df</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<pre><code>##           ID                                Description   t.name    direction
+## 1 GO:0042254                        ribosome biogenesis    0h-6h   Activation
+## 2 GO:0042254                        ribosome biogenesis   6h-24h   Activation
+## 3 GO:0042254                        ribosome biogenesis  24h-48h   Activation
+## 4 GO:0042254                        ribosome biogenesis  48h-72h Deactivation
+## 5 GO:0042254                        ribosome biogenesis 72h-168h Deactivation
+## 6 GO:0001819 positive regulation of cytokine production    0h-6h   Activation
+##   Avg_log2FC
+## 1  0.5758218
+## 2  0.4704128
+## 3  0.0269940
+## 4 -0.4836805
+## 5 -0.7361026
+## 6  3.0076572</code></pre>
+</div>
+<div id="time-heatmap-with-non-redundant-go-terms-" class="section level4">
+<h4 class="hasAnchor">
+<a href="#time-heatmap-with-non-redundant-go-terms-" class="anchor"></a>4. Time-Heatmap with non-redundant GO terms.</h4>
+<p>Sometimes GO terms are redundant, users can select manually non-redundant GOs using function below.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">go.terms</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">time_heatmap</span><span class="op">$</span><span class="va">GO.df</span><span class="op">$</span><span class="va">Description</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
+<span class="va">time_heatmap_selGO</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_TimeHeatmap_selGO.html">draw_TimeHeatmap_selGO</a></span><span class="op">(</span>time_heatmap <span class="op">=</span> <span class="va">time_heatmap</span>, sel.go <span class="op">=</span> <span class="va">go.terms</span>, master.list <span class="op">=</span> <span class="va">master.list</span>, GO.perc.thres <span class="op">=</span> <span class="fl">0</span>, nDDEG.thres <span class="op">=</span> <span class="fl">0</span>, save.tiff.path <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></code></pre></div>
+<p><img src="Time-Heatmap-GO_files/figure-html/unnamed-chunk-8-1.png" width="768"></p>
 </div>
 <div id="look-at-genes-candidates-from-picked-enriched-go-terms-" class="section level4">
 <h4 class="hasAnchor">
-<a href="#look-at-genes-candidates-from-picked-enriched-go-terms-" class="anchor"></a>4. Look at Genes candidates from picked enriched GO terms.</h4>
+<a href="#look-at-genes-candidates-from-picked-enriched-go-terms-" class="anchor"></a>5. Look at Genes candidates from picked enriched GO terms.</h4>
 <p>To look at which genes are involved within the TimeHeatmap above. We can call draw_GOHeatmap function. This function is useful when one is comparing multiple projects.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">go.terms</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"regulation of defense response"</span>, <span class="st">"leukocyte migration"</span>, <span class="st">"myeloid leukocyte migration"</span>, <span class="st">"leukocyte chemotaxis"</span>,
- <span class="st">"granulocyte chemotaxis"</span>, <span class="st">"cellular response to chemokine"</span>, <span class="st">"chemokine-mediated signaling pathway"</span>, <span class="st">"angiogenesis"</span>, <span class="st">"sprouting angiogenesis"</span>,  <span class="st">"respone to bacterium"</span>, <span class="st">"leukocyte mediated immunity"</span><span class="op">)</span>
-<span class="va">gene.GO.df</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_GOHeatmap.html">draw_GOHeatmap</a></span><span class="op">(</span>master.list <span class="op">=</span> <span class="va">master.list</span>, time.window <span class="op">=</span> <span class="st">"0h-6h"</span>, go.terms <span class="op">=</span> <span class="va">go.terms</span>, id.ensembl <span class="op">=</span> <span class="cn">TRUE</span>, merge.df <span class="op">=</span> <span class="va">GO.time.df</span><span class="op">$</span><span class="va">merge.df</span>, 
-                           logFC.thres <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="Time-Heatmap-GO_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">go.terms</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"response to lipopolysaccharide"</span>,
+            <span class="st">"response to interferon-beta"</span>,
+            <span class="st">"cytokine-mediated signaling pathway"</span>,
+            <span class="st">"response to interferon-gamma"</span>,
+            <span class="st">"response to virus"</span>,
+            <span class="st">"leukocyte migration"</span>,
+            <span class="st">"mitotic nuclear division"</span>,
+            <span class="st">"regulation of vasculature development"</span>,
+            <span class="st">"extracellular structure organization"</span>,
+            <span class="st">"regulation of epithelial cell proliferation"</span><span class="op">)</span>
+<span class="va">gene.GO.df</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/draw_GOHeatmap.html">draw_GOHeatmap</a></span><span class="op">(</span>master.list <span class="op">=</span> <span class="va">master.list</span>, time.window <span class="op">=</span> <span class="st">"0h-6h"</span>, 
+                           go.terms <span class="op">=</span> <span class="va">go.terms</span>,  merge.df <span class="op">=</span> <span class="va">time_heatmap</span><span class="op">$</span><span class="va">merge.df</span>, 
+                           logFC.thres <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code></pre></div>
+<p><img src="Time-Heatmap-GO_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
 <p>The data.frame gene.GO.df contains all the genes we found through TrendCatcher without logFC threshold.</p>
 <ul>
 <li>type, activation pathway or deactivation pathway.</li>
@@ -164,22 +189,22 @@
 <li>Symbol, gene symbol.</li>
 <li>description, gene description.</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gene.GO.df</span><span class="op">)</span></code></pre></div>
-<pre><code>##          type  Description               gene logFC.prev.bk prev.bk.t  Symbol
-## 1  Activation angiogenesis ENSMUSG00000000555      2.019269         0   Itga5
-## 5  Activation angiogenesis ENSMUSG00000002289      3.469766         0 Angptl4
-## 11 Activation angiogenesis ENSMUSG00000006445      2.210694         0   Epha2
-## 17 Activation angiogenesis ENSMUSG00000015340      2.263666         0    Cybb
-## 35 Activation angiogenesis ENSMUSG00000020676      6.495073         0   Ccl11
-## 40 Activation angiogenesis ENSMUSG00000021281      4.627724         0 Tnfaip2
-##                                                                          description
-## 1    integrin alpha 5 (fibronectin receptor alpha) [Source:MGI Symbol;Acc:MGI:96604]
-## 5                            angiopoietin-like 4 [Source:MGI Symbol;Acc:MGI:1888999]
-## 11                                 Eph receptor A2 [Source:MGI Symbol;Acc:MGI:95278]
-## 17              cytochrome b-245, beta polypeptide [Source:MGI Symbol;Acc:MGI:88574]
-## 35                chemokine (C-C motif) ligand 11 [Source:MGI Symbol;Acc:MGI:103576]
-## 40 tumor necrosis factor, alpha-induced protein 2 [Source:MGI Symbol;Acc:MGI:104960]</code></pre>
+<pre><code>##         type                         Description  gene logFC.prev.bk prev.bk.t
+## 1 Activation cytokine-mediated signaling pathway  Ccl3      5.951150         0
+## 2 Activation cytokine-mediated signaling pathway Ccl11      6.495073         0
+## 3 Activation cytokine-mediated signaling pathway   Tnf     32.479065         0
+## 4 Activation cytokine-mediated signaling pathway   Il6     10.157610         0
+## 5 Activation cytokine-mediated signaling pathway Il1r2     32.384983         0
+## 6 Activation cytokine-mediated signaling pathway Il1rn      8.137336         0
+##   Symbol
+## 1   Ccl3
+## 2  Ccl11
+## 3    Tnf
+## 4    Il6
+## 5  Il1r2
+## 6  Il1rn</code></pre>
 </div>
   </div>
 

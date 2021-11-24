@@ -9,15 +9,16 @@ draw_TimeHeatmap_GO(
   logFC.thres = 1,
   top.n = 10,
   dyn.gene.p.thres = 0.05,
-  keyType = "ENSEMBL",
+  keyType = "SYMBOL",
   OrgDb = "org.Mm.eg.db",
   ont = "BP",
   term.width = 80,
   GO.enrich.p = 0.05,
   figure.title = "",
-  save.pdf.path = NA,
-  pdf.width = 15,
-  pdf.height = 15
+  save.tiff.path = NA,
+  tiff.res = 100,
+  tiff.width = 1500,
+  tiff.height = 1500
 )
 }
 \arguments{

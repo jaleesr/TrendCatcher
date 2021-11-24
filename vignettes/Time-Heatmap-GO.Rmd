@@ -12,21 +12,8 @@ library(TrendCatcher)
 #### 2. Now read the demo master.list.
 
 ```{r}
-demo.master.list.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+demo.master.list.path<-system.file("extdata", "BrainMasterList_Symbol.rda", package = "TrendCatcher")
 load(demo.master.list.path)
-```
-
-To run TimeHeatmap function, the master.table must include "Symbol" column with gene symbols.
-
-```{r}
-gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
-master.table.new<-cbind(master.list$master.table, gene.symbol.df[match(master.list$master.table$Gene, gene.symbol.df$Gene), c("Symbol", "description")])
-master.list$master.table<-master.table.new
-head(master.list$master.table)
-```
-```{r}
-### ONLY use this command if CSV file is using GENE SYMBOL as row name!!!!!!
-#master.list$master.table$Symbol<-master.list$master.table$Gene 
 ```
 
 #### 3. Use GO enrichment analysis to construct Time-Heatmap
@@ -50,28 +37,27 @@ names(time_heatmap)
 
 
 Print out TimeHeatmap from the time_heatmap list object. 
-```{r}
+```{r, fig.width=9, fig.height=10}
 print(time_heatmap$time.heatmap)
 ```
 
 Check all the enriched GO terms. 
 
 ```{r}
-head(time_heatmap$merge.df)
+head(time_heatmap$merge.df[,1:5])
 ```
 
 Check top enriched GO terms average log2FC within each time window. 
 ```{r}
-head(time_heatmap$GO.df)
+head(time_heatmap$GO.df[,1:5])
 ```
 
 #### 4. Time-Heatmap with non-redundant GO terms.
 
 Sometimes GO terms are redundant, users can select manually non-redundant GOs using function below.
-```{r}
+```{r, fig.width=8, fig.height=5}
 go.terms<-unique(time_heatmap$GO.df$Description)[1:5]
-time_heatmap_selGO<-draw_TimeHeatmap_selGO(time_heatmap = time_heatmap, sel.go = go.terms, master.list = master.list, GO.perc.thres = 0, nDDEG.thres = 0)
-print(time_heatmap_selGO$time.heatmap)
+time_heatmap_selGO<-draw_TimeHeatmap_selGO(time_heatmap = time_heatmap, sel.go = go.terms, master.list = master.list, GO.perc.thres = 0, nDDEG.thres = 0, save.tiff.path = NA)
 ```
 
 #### 5. Look at Genes candidates from picked enriched GO terms.
