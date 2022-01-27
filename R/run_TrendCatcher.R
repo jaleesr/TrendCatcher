@@ -37,7 +37,8 @@ run_TrendCatcher<-function(count.table.path = "~/Documents/TrendCatcher/inst/ext
                               time.unit = "h",
                               min.low.count = 1,
                               para.core.n = NA,
-                              dyn.p.thres = 0.05){
+                              dyn.p.thres = 0.05,
+                              show.verbose = F){
   # Version 1.0.0
   start_time <- Sys.time()
 
@@ -72,7 +73,7 @@ run_TrendCatcher<-function(count.table.path = "~/Documents/TrendCatcher/inst/ext
   ##### Step 4. Loop through each gene to generate master table
   message("Run TrendCatcher.")
   gene.spline.list.table<-run_TrendCatcherAllGenes(raw.df = raw.df, gene.dispersion = gene.dispersion,
-                                                   baseline.t = baseline.t, cores = para.core.n)
+                                                   baseline.t = baseline.t, cores = para.core.n, show.verbose = show.verbose)
 
   ##### Step 5, Calculate meta p for each gene
   message("Calculate dynamic p-value for each gene.")
