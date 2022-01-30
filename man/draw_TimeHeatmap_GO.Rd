@@ -67,6 +67,7 @@ analysis.
 \dontrun{
 example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
 load(example.file.path)
+gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
 th.obj<-draw_TimeHeatmap_GO(master.list = master.list)
 print(th.obj$time.heatmap)
 head(th.obj$merge.df)

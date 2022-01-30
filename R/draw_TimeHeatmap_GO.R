@@ -31,6 +31,9 @@
 #' \dontrun{
 #' example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
 #' load(example.file.path)
+#' gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
+#  master.table.new<-cbind(master.list$master.table, gene.symbol.df[match(master.list$master.table$Gene, gene.symbol.df$Gene), c("Symbol", "description")])
+#  master.list$master.table<-master.table.new
 #' th.obj<-draw_TimeHeatmap_GO(master.list = master.list)
 #' print(th.obj$time.heatmap)
 #' head(th.obj$merge.df)
@@ -54,6 +57,20 @@ draw_TimeHeatmap_GO<-function(master.list, logFC.thres = 1, top.n = 10, dyn.gene
     term.width<-80
   }
   
+  ####### Check If there is the Symbol column exist!!!! ######
+  idx<-grep("Symbol", colnames(master.list$master.table))
+  if(length(idx)==0){stop("Please add Symbol column to your master.list$master.table. By default, it should be a column of gene SYMBOLs!")}
+  
+  
+  ############ If keyType is SYMBOL, but Symbol column is ENSEMBL, need to stop!!!
+  # Check Symbol column has many genes start with EN
+  txt.arr<-master.list$master.table$Symbol
+  txt.initial.2<-substr(x = txt.arr, start = 1, stop = 2)
+  en.num<-sum(txt.initial.2 == "EN", na.rm = T)
+  if(en.num>100 & keyType == "SYMBOL"){stop("Your Symbol column contains ENSEMBL, please change keyType to ENSEMBL!!!") }
+  if(en.num==0 & keyType != "SYMBOL"){stop("Your Symbol column contains SYMBOL, please change keyType to SYMBOL!!!") }
+  
+  
   ### 1. Get the time array
   t.arr <- master.list$t.arr
   ### 2. Get the time unit
@@ -63,6 +80,7 @@ draw_TimeHeatmap_GO<-function(master.list, logFC.thres = 1, top.n = 10, dyn.gene
     stop("Master.list needs time unit and time array.")
   dyn.gene.pattern <- master.list$master.table %>% filter(dyn.p.val.adj <= 
                                                             dyn.gene.p.thres)
+
   ### 4. Up-regulated pathways genes
   # Loop by time window to filter out genes going up within each time window
   act.list <- list()

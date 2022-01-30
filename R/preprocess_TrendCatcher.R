@@ -59,11 +59,19 @@ preprocess_TrendCatcher<-function(count.table.path = "",
     stop("The row name must be gene name!")
   }
 
-  ### 5. Count table must be integer
-  is.interger.table<-is.integer(raw.count[1,1])
-  if(is.interger.table!=1){
+  ### 5. Count table must be non-negative integer
+  is.interger.table<-floor(raw.count)==raw.count
+  if(!all(is.interger.table)){
     stop("The count table must be an integer table!")
   }
+  if(any(is.na(raw.count))){
+    stop("There is NA value in the count table!")
+  }
+  is.positive.table<-raw.count>=0
+  if(!all(is.positive.table)){
+    stop("The count table must be non-negative table!")
+  }
+  
 
   ### 6. Must be 1 single project
   prj.arr<-unique(as.data.frame(str_split(colnames(raw.count), "_", simplify = T))[,1])

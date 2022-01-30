@@ -10,6 +10,7 @@ draw_TimeHeatmap_selGO(
   master.list,
   GO.perc.thres = 0,
   nDDEG.thres = 0,
+  term.width = 80,
   figure.title = "",
   save.tiff.path = NA,
   tiff.res = 100,

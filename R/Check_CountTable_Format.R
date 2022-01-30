@@ -44,17 +44,25 @@ Check_CountTable_Format<-function(count.table.path, min.low.count = 1){
     stop("The row name must be gene name!")
   }
 
-  ### 5. Count table must be integer
-  is.interger.table<-is.integer(raw.df[1,1])
-  if(is.interger.table!=1){
+  ### 5. Count table must be non-negative integer
+  is.interger.table<-floor(raw.df)==raw.df
+  if(!all(is.interger.table)){
     stop("The count table must be an integer table!")
   }
-
+  if(any(is.na(raw.df))){
+    stop("There is NA value in the count table!")
+  }
+  is.positive.table<-raw.df>=0
+  if(!all(is.positive.table)){
+    stop("The count table must be non-negative table!")
+  }
+  
   ### 6. Must be 1 single project
   prj.arr<-unique(as.data.frame(str_split(colnames(raw.df), "_", simplify = T))[,1])
   if(length(prj.arr)>1){
     stop("The project name must be the same!!!")
   }
+  
 
   ##################### If passed all the check, now order the count table by time ##########
 
@@ -62,6 +70,11 @@ Check_CountTable_Format<-function(count.table.path, min.low.count = 1){
   time.arr<-get_time_array(raw.count.df = raw.df)
   t.unique.arr<-unique(time.arr)
   t.unique.arr<-t.unique.arr[order(as.numeric(t.unique.arr))]
+  
+  #### The baseline time point requires more than one sample !!!
+  t.min<-min(t.unique.arr)
+  baseline.idx<-grep(paste0(prj.arr,"_",t.min, "_"), colnames(raw.df))
+  if(length(baseline.idx)==1){stop("TrendCatcher requires more than 1 replicate at baseline time point!!!")}
 
   ### 8. Get rep array
   rep.arr<-get_rep_array(raw.count.df = raw.df)
@@ -71,7 +84,9 @@ Check_CountTable_Format<-function(count.table.path, min.low.count = 1){
   colnames.ordered<-NULL
   for(t in t.unique.arr){
     sample.t.index<-grep(paste0(prj.arr,"_",t, "_"), colnames(raw.df))
-    t.rep.arr<-get_rep_array(raw.count.df = raw.df[,sample.t.index])
+    tmp.df<-as.data.frame(raw.df[,sample.t.index])
+    colnames(tmp.df)<-colnames(raw.df)[sample.t.index]
+    t.rep.arr<-get_rep_array(raw.count.df = tmp.df)
     t.rep.arr.order<-t.rep.arr[order(as.numeric(t.rep.arr))]
     colnames.ordered<-c(colnames.ordered, paste0(prj.arr, "_", t, "_", "Rep",t.rep.arr.order))
   }
@@ -83,7 +98,9 @@ Check_CountTable_Format<-function(count.table.path, min.low.count = 1){
   for(i in 1:length(t.unique.arr)){
     t<-t.unique.arr[i]
     sample.t.index<-grep(paste0(prj.arr,"_",t, "_"), colnames(raw.df))
-    t.min.list[[i]]<-apply(raw.df[,sample.t.index], MARGIN = 1, min)
+    tmp.df<-as.data.frame(raw.df[,sample.t.index])
+    colnames(tmp.df)<-colnames(raw.df)[sample.t.index]
+    t.min.list[[i]]<-apply(tmp.df, MARGIN = 1, min)
   }
   t.min.df<-do.call(cbind, t.min.list)
   remove.idx<-which(rowSums(t.min.df)<=min.low.count)

@@ -10,7 +10,8 @@ run_TrendCatcher(
   time.unit = "h",
   min.low.count = 1,
   para.core.n = NA,
-  dyn.p.thres = 0.05
+  dyn.p.thres = 0.05,
+  show.verbose = F
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ replicateID, such as "Lung_0_Rep1")}
 
 \item{baseline.t, }{one numeric variable, the baseline time of the longitudinal study. By default it is 0.}
 
-\item{time.unit, }{one character variaable, the time unit of longitudinal study. If choose hour,
+\item{time.unit, }{one character variable, the time unit of longitudinal study. If choose hour,
 please transform all sample collecting time into hour.}
 
 \item{min.low.count, }{one numeric variable, the minimal count threshold for filtering low count within each time group.
@@ -30,13 +31,17 @@ By default it is 1.}
 By default it is NA, which will use N-1 cores from computer.}
 
 \item{dyn.p.thres, }{one numeric variable, the threshold of p-value of the dynamic gene. By default 0.05.}
+
+\item{show.verbose, }{logic variable. If gssanova fitting failed, users can set this to TRUE, it will print out which gene failed the fitting.
+This process takes only one CPU, so it may be slower than the multi-core version.
+Normally the fitting failure is caused by low count genes. Users can manually remove it from your count table. By default set to FALSE.}
 }
 \value{
 A list object, including "time.unit", "baseline.t", "t.arr", "Project.name", "raw.df",
 "fitted.count" and "master.table".
 }
 \description{
-This is the main function to run TrendCatcher to identify Dynamic Differential Expressed Genes (DDEGs).
+This is the main function to run TrendCatcher to identify Dynamic Differentially Expressed Genes (DDEGs).
 This function loads a rounded count matrix CSV file after the normalization and batch correction, run the core
 algorithmand output a list object contains all the genes dynamic information.
 }
@@ -48,6 +53,7 @@ baseline.t = 0,
 time.unit = "h",
 min.low.count = 1,
 para.core.n = NA,
-dyn.p.thres = 0.05)
+dyn.p.thres = 0.05,
+show.verbose = FALSE)
 }
 }

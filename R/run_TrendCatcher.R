@@ -1,6 +1,6 @@
 #' Run TrendCatcher Main Algorithm
 #'
-#' This is the main function to run TrendCatcher to identify Dynamic Differential Expressed Genes (DDEGs).
+#' This is the main function to run TrendCatcher to identify Dynamic Differentially Expressed Genes (DDEGs).
 #' This function loads a rounded count matrix CSV file after the normalization and batch correction, run the core
 #' algorithmand output a list object contains all the genes dynamic information.
 #'
@@ -9,13 +9,17 @@
 #' replicateID, such as "Lung_0_Rep1")
 #' @param baseline.t, one numeric variable, the baseline time of the longitudinal study. By default it is 0.
 
-#' @param time.unit, one character variaable, the time unit of longitudinal study. If choose hour,
+#' @param time.unit, one character variable, the time unit of longitudinal study. If choose hour,
 #' please transform all sample collecting time into hour.
 #' @param min.low.count, one numeric variable, the minimal count threshold for filtering low count within each time group.
 #' By default it is 1.
 #' @param para.core.n, one numeric variable, number of cores will be used for running TrendCatcher.
 #' By default it is NA, which will use N-1 cores from computer.
 #' @param dyn.p.thres, one numeric variable, the threshold of p-value of the dynamic gene. By default 0.05.
+#' @param show.verbose, logic variable. If gssanova fitting failed, users can set this to TRUE, it will print out which gene failed the fitting. 
+#' This process takes only one CPU, so it may be slower than the multi-core version. 
+#' Normally the fitting failure is caused by low count genes. Users can manually remove it from your count table. By default set to FALSE.
+#' 
 #'
 #' @return A list object, including "time.unit", "baseline.t", "t.arr", "Project.name", "raw.df",
 #' "fitted.count" and "master.table".
@@ -28,7 +32,8 @@
 #' time.unit = "h",
 #' min.low.count = 1,
 #' para.core.n = NA,
-#' dyn.p.thres = 0.05)
+#' dyn.p.thres = 0.05,
+#' show.verbose = FALSE)
 #' }
 #' @export
 #'
@@ -45,7 +50,6 @@ run_TrendCatcher<-function(count.table.path = "~/Documents/TrendCatcher/inst/ext
   ######### Create the master.list ######
   master.list<-list()
   master.list[["time.unit"]]<-time.unit
-  master.list[["baseline.t"]]<-baseline.t
 
   ##### Step 1, check count table format, and filter out low count gene
   message("Read count table.")
@@ -55,8 +59,11 @@ run_TrendCatcher<-function(count.table.path = "~/Documents/TrendCatcher/inst/ext
   origin.count.table<-raw.list$raw.df
 
   message("Count table format correct, finished loading.")
-
-  master.list[["t.arr"]]<-unique(get_time_array(raw.count.df = raw.df))
+  
+  t.arr<- unique(get_time_array(raw.count.df = raw.df))
+  if(min(t.arr)!=baseline.t){stop("baseline.t is not your smallest time point!!! Please change it into your smallest time point.")}
+  master.list[["t.arr"]]<-t.arr
+  master.list[["baseline.t"]]<-baseline.t
   master.list[["Project.name"]]<-unique(as.data.frame(str_split(colnames(raw.df), "_", simplify = T))[,1])
   master.list[["raw.df"]]<-origin.count.table
 
