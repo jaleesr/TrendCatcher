@@ -1,5 +1,6 @@
 Package: TrendCatcher
-Title: TrendCatcher: A Versitile R package for analyse longitudinal RNA-seq study
+Title: TrendCatcher: A Versitile R package for analyse longitudinal
+        RNA-seq study
 Version: 1.0.0
 Authors@R: 
     person(given = "Xinge",
@@ -9,27 +10,17 @@ Authors@R:
 Description: Identify dynamic gene from longitudinal/time course RNA-seq dataset.
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
-Depends:
-    R (>= 4.0.3),
-    DESeq2 (>= 1.28.1),
-    RColorBrewer (>= 1.1.2),
-    plyr (>= 1.1.2),
-    gss (>= 2.2.2),
-    compiler (>= 4.0.3),
-    stringr (>= 1.4.0),
-    RColorBrewer (>= 1.1.2),
-    gridExtra (>= 2.3),
-    ggplot2 (>= 3.3.2),
-    clusterProfiler (>= 3.16.1),
-    org.Mm.eg.db (>= 3.11.4),
-    org.Hs.eg.db (>= 3.11.4),
-    ggnewscale (>= 0.4.3),
-    enrichR (>= 2.1),
-    foreach (>= 1.5.0),
-    biomaRt (>= 2.44.4),
-    circlize (>= 0.4.10),
-    ComplexHeatmap (>= 2.4.3),
-    reshape2(>= 1.4.4)
+Depends: R (>= 4.0.3), DESeq2 (>= 1.28.1), RColorBrewer (>= 1.1.2),
+        plyr (>= 1.1.2), gss (>= 2.2.2), compiler (>= 4.0.3), stringr
+        (>= 1.4.0), RColorBrewer (>= 1.1.2), gridExtra (>= 2.3),
+        ggplot2 (>= 3.3.2), clusterProfiler (>= 3.16.1), org.Mm.eg.db
+        (>= 3.11.4), org.Hs.eg.db (>= 3.11.4), ggnewscale (>= 0.4.3),
+        enrichR (>= 2.1), foreach (>= 1.5.0), biomaRt (>= 2.44.4),
+        circlize (>= 0.4.10), ComplexHeatmap (>= 2.4.3), 
+        reshape2 (>= 1.4.4), pracma (>= 2.3.8)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
+NeedsCompilation: no
+Packaged: 2022-07-11 00:23:29 UTC; xingewang
+Author: Xinge Wang [aut, cre]
+Maintainer: Xinge Wang <xwang234@uic.edu>

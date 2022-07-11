@@ -1,0 +1,75 @@
+---
+title: "4.Compare DDEGs from same biological pathway but two different groups"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+#### 1. Load TrendCatcher R package.
+
+```{r, results='hide', message=FALSE}
+library(TrendCatcher)
+```
+
+#### 2. Now read the two demo master.list objects.
+
+```{r}
+severe.path<-system.file("extdata", "MasterListSevere.rda", package = "TrendCatcher")
+load(severe.path)
+moderate.path<-system.file("extdata", "MasterListModerate.rda", package = "TrendCatcher")
+load(moderate.path)
+ht.path<-system.file("extdata", "htSevere.rda", package = "TrendCatcher")
+load(ht.path)
+```
+
+```{r}
+#head(ht.severe$GO.df)
+head(ht.severe$GO.df)
+```
+
+```{r, fig.height=10, fig.width=10}
+#### To compare DDEGs trajectories from a specific biological pathway
+### In this example, we show DDEGs from "neutrophil activation", one of the top enriched timeheatmap biological pathway from severe group
+
+g<-draw_CurveComp(master.list.1 = master.list.severe, master.list.2 = master.list.moderate, ht.1 = ht.severe, pathway = "neutrophil activation",group.1.name = "severe", group.2.name = "moderate")
+print(g)
+
+```
+
+```{r, echo=TRUE, results='hide'}
+#### Permutation to check which time interval two curves are significantly seperated
+perm_output<-draw_CurveComp_Perm(master.list.1 = master.list.severe, 
+                                 master.list.2 = master.list.moderate, 
+                                 ht.1 = ht.severe, 
+                                 pathway = "neutrophil activation", 
+                                 group.1.name = "severe", 
+                                 group.2.name = "moderate", 
+                                 n.perm = 100, 
+                                 parall = FALSE, 
+                                 pvalue.threshold = 0.05)
+```
+
+```{r,fig.height=10, fig.width=10}
+perm_output$plot
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

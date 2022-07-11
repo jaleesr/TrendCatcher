@@ -269,3 +269,208 @@ get_traj_pattern<-function(t.arr){
   pattern.list<-list(start.idx = start.idx, end.idx = end.idx, pattern = segments.direction.push)
   return(pattern.list)
 }
+
+
+return.center<-function(master.list, gene.arr){
+  fit.count<-master.list$fitted.count
+  fit.count$Symbol<-master.list$master.table$Symbol[match(fit.count$Gene, master.list$master.table$Gene)]
+  fit.count<-fit.count %>% filter(Symbol %in% gene.arr)
+  df<-ddply(fit.count, .(Gene), function(df){
+    base<-df$Fit.Count[1]
+    df$Center.logFC<-log(df$Fit.Count/base, 2)
+    return(df)
+  })
+  return(df)
+}
+
+
+#### Modify functions from package MetaLonDA R package functions
+
+intervalArea.new = function(dd.1, dd.2){
+  size = length(dd.1$Time)
+  ar = numeric(size - 1)
+  ## Calculate the absoulte and the sign of each interval area
+  ar.abs = numeric(size - 1)
+  ar.sign = numeric(size - 1)
+  for(i in 1:(size - 1)){
+    area.0 = trapz(dd.1$Time[i:(i+1)], dd.1$Count[i:(i+1)])
+    area.1 = trapz(dd.2$Time[i:(i+1)], dd.2$Count[i:(i+1)])
+    ar[i] = (abs(area.0) - abs(area.1)) / max(abs(area.0), abs(area.1))
+    if(is.na(ar[i])){
+      ar[i]=1
+    }
+    ar.abs[i] = abs(ar[i])
+    ar.sign[i] = ar[i]/abs(ar[i])
+  }
+  area<-list(ar = ar, ar.abs = ar.abs, ar.sign = ar.sign)
+  return(area)
+}
+
+#' CurveFitting 
+#' @export
+#'
+curveFitting.new = function(perm.dat.1, points){
+  group.1<-perm.dat.1 %>% filter(Group == 1)
+  group.2<-perm.dat.1 %>% filter(Group == 2)
+  mod.1 = loess(Count ~ Time, data = group.1)
+  mod.2 = loess(Count ~ Time, data = group.2)
+  est.1 = predict(mod.1, data.frame(Time = points), se = TRUE)
+  est.2 = predict(mod.2, data.frame(Time = points), se = TRUE)
+  dd.1 = data.frame(Time = points, Count = est.1$fit, Group = group.1.name)
+  dd.2 = data.frame(Time = points, Count = est.2$fit, Group = group.2.name)
+  output = list(dd.1, dd.2)
+  return(output)
+}
+
+
+findSigInterval = function(adjusted.pvalue, threshold = 0.05, sign)
+{
+  sig = which(adjusted.pvalue < threshold)
+  sign = sign[sig]
+  padj = adjusted.pvalue[sig]
+  start = numeric()
+  end = numeric()
+  p = numeric()
+  dom = numeric()
+  
+  if(length(sig) == 0)
+  {
+    cat("No Significant Intevals Found \n")
+  }
+  else if(length(sig) == 1)
+  {
+    start = sig[1]
+    end = sig [1]
+    p = padj[1]
+    dom = sign[1]
+  }
+  else
+  {
+    start = sig[1]
+    
+    if((sig[2] - sig[1]) != 1 | sign[2] != sign[1])
+    {
+      end = c(end, sig[1])
+      dom = c(dom, sign[1])
+      p = c(p, padj[1])
+    }
+    
+    for(i in 2:length(sig))
+    {
+      if(i != length(sig))
+      {
+        if((sig[i] - sig[i-1]) > 1 | sign[i] != sign[i-1])
+        {
+          start= c(start, sig[i])
+        }
+        
+        if((sig[i+1] - sig[i]) != 1 | sign[i+1] != sign[i])
+        {
+          end = c(end, sig[i])
+          dom = c(dom, sign[i])
+          p = c(p, mean(adjusted.pvalue[start[length(start)] : end[length(end)]]))
+        }
+      }
+      else
+      {
+        if((sig[i]-sig[i-1]) > 1 | sign[i] != sign[i-1])
+        {
+          start= c(start, sig[i])
+        }
+        end= c(end, sig[i])
+        dom = c(dom, sign[i])
+        p = c(p, mean(adjusted.pvalue[start[length(start)] : end[length(end)]]))
+      }
+    }
+  }
+  
+  return(list(start = start, end = end, pvalue = p, dominant = dom))
+}
+
+
+#' Permuation
+#' @export
+#'
+
+permutation.new<-function(perm.dat, n.perm = 100, points, parall = FALSE){
+  
+  ## Start permutation
+  cat("Start Permutation \n")
+  pp = list() 
+  perm = 0 # to be able to store the value
+  n.subjects = length(unique(perm.dat$ID))
+  #cat("# of Subjects = ", n.subjects, "\n")
+  aggregate.df<-perm.dat
+  
+  ## Run in Parallel
+  if(parall == TRUE) {
+    max.cores = detectCores()
+    cat("# cores = ", max.cores, "\n")
+    desired.cores = max.cores - 1		
+    cl = makeCluster(desired.cores)
+    registerDoParallel(cl)
+  } 
+  
+  size<-max(aggregate.df$ID)
+  pp = llply(1:n.perm, function(j){
+    perm.dat.1<-aggregate.df
+    group.perm<-c(rep(1, round(size/2)), rep(2, size - round(size/2)))
+    group.perm[sample(seq(1, round(size/2)), round(size*0.05), replace = F)]<-2
+    
+    group.perm[sample(seq(round(size/2)+1, size), round(size*0.05), replace = F)]<-1
+    
+    rep.times<-as.numeric(table(aggregate.df$ID))
+    
+    new.group.id<-rep.int(x = group.perm, times = rep.times)
+    perm.dat.1$Group<-new.group.id
+    g.1 = perm.dat.1[perm.dat.1$Group == 1, ]
+    g.2 = perm.dat.1[perm.dat.1$Group == 2, ]
+    g.min = max(sort(g.1$Time)[1], sort(g.2$Time)[1])
+    g.max = min(sort(g.1$Time)[length(g.1$Time)], sort(g.2$Time)[length(g.2$Time)])
+
+    
+    if(g.min > min(points) | g.max < max(points))
+    {
+      cat("Special Case: generated permutation is out of range \n")
+      assign(paste("Model", j, sep = "_"), NULL)
+    } else{
+      group.1<-perm.dat.1 %>% filter(Group == 1)
+      group.2<-perm.dat.1 %>% filter(Group == 2)
+      mod.1 = loess(Count ~ Time, data = group.1)
+      mod.2 = loess(Count ~ Time, data = group.2)
+      est.1 = predict(mod.1, data.frame(Time = points), se = TRUE)
+      est.2 = predict(mod.2, data.frame(Time = points), se = TRUE)
+      dd.1 = data.frame(Time = points, Count = est.1$fit, Group = group.1.name)
+      dd.2 = data.frame(Time = points, Count = est.2$fit, Group = group.2.name)
+      perm = list(dd.1, dd.2)
+      #perm = curveFitting.new(perm.dat.1= perm.dat.1, points = points)
+      cat("QQQQ")
+      assign(paste("Model", j, sep = "_"), perm)
+    }
+  }, .parallel = parall, .progress = "text", .inform = TRUE,
+  .paropts = list(.export=ls(.GlobalEnv),
+                  .packages=.packages(all.available=T)))
+  
+  
+  if(parall == TRUE) {
+    stopCluster(cl)
+  }
+  
+  pp[sapply(pp, is.null)] = NULL
+  return(pp)
+}
+
+
+areaPermutation.new = function(perm)
+{
+  ar.list = list()
+  list.len = length(perm)
+  for (j in 1:list.len)
+  {
+    ar.list[[j]] = intervalArea.new(dd.1 = as.data.frame(perm[[j]][1]), dd.2 = as.data.frame(perm[[j]][2]))
+  }
+  
+  return(ar.list)
+}
+
+
