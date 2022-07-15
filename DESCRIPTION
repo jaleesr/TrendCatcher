@@ -13,11 +13,22 @@ Encoding: UTF-8
 Depends: 
         R (>= 3.6.0), 
         RColorBrewer,
-        plyr, gss, compiler, stringr, RColorBrewer, gridExtra,
-        ggplot2, ggnewscale,
-        enrichR, foreach,
-        circlize, doSNOW,
-        reshape2, pracma, nlme, MASS
+        plyr, 
+        gss, 
+        compiler, 
+        stringr, 
+        gridExtra,
+        ggplot2, 
+        ggnewscale,
+        enrichR, 
+        foreach,
+        circlize, 
+        doSNOW,
+        reshape2, 
+        pracma, 
+        nlme, 
+        MASS
+        
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 NeedsCompilation: no
