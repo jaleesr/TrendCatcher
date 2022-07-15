@@ -10,8 +10,8 @@
 #'
 #'
 get_GeneEnsembl2Symbol<-function(ensemble.arr, dataset = "mmusculus_gene_ensembl"){
-  ensembl = useMart("ensembl", dataset =dataset)
-  dat = getBM(
+  ensembl = biomaRt::useMart("ensembl", dataset =dataset)
+  dat = biomaRt::getBM(
     values = ensemble.arr,
     filters = c("ensembl_gene_id"),
     attributes = c("ensembl_gene_id", "external_gene_name", "description"),
@@ -33,8 +33,8 @@ get_GeneEnsembl2Symbol<-function(ensemble.arr, dataset = "mmusculus_gene_ensembl
 #'
 #'
 get_Symbol2GeneEnsembl<-function(symbol.arr, dataset = "mmusculus_gene_ensembl"){
-  ensembl = useMart("ensembl", dataset = dataset)
-  dat = getBM(
+  ensembl = biomaRt::useMart("ensembl", dataset = dataset)
+  dat = biomaRt::getBM(
     values = symbol.arr,
     filters = c("external_gene_name"),
     attributes = c("ensembl_gene_id", "external_gene_name", "description"),

@@ -22,14 +22,6 @@
 #' @return "arrangelist" "list" object.
 #' 
 # 
-#' @examples
-#' gene.symbol.arr <-  c("Cxcl1", "Cxcl5", "Cxcl10", "Cxcl11", "Abcb1b", "Icam1", "Ifitm1", "Ifitm2", "Ifitm3")
-#' example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
-#' load(file= example.file.path)
-#' gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
-#' master.table.new<-cbind(master.list$master.table, gene.symbol.df[match(master.list$master.table$Gene, gene.symbol.df$Gene), c("Symbol", "description")])
-#' master.list$master.table<-master.table.new
-#' gplots<-draw_GeneTraj(master.list, gene.symbol.arr, savepdf.path = NA, ncol = 3, nrow = 3, fig.width =15, fig.height=10)
 #' @export
 #'
 draw_GeneTraj<-function(master.list, gene.symbol.arr, savepdf.path=NA, ncol = 5, nrow = 3, fig.width = 15, fig.height = 10){
