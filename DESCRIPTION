@@ -11,7 +11,7 @@ Description: Identify dynamic gene from longitudinal/time course RNA-seq dataset
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends: 
-        DESeq2, RColorBrewer,
+        R (>= 4.2), DESeq2, RColorBrewer,
         plyr, gss, compiler, stringr, RColorBrewer, gridExtra,
         ggplot2, clusterProfiler, org.Mm.eg.db, org.Hs.eg.db, ggnewscale,
         enrichR, foreach, biomaRt,
