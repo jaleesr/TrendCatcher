@@ -12,12 +12,11 @@ License: GPL (>= 2)
 Encoding: UTF-8
 Depends: 
         R (>= 3.6.0), 
-        DESeq2 (>= 1.36.0),
         RColorBrewer,
         plyr, gss, compiler, stringr, RColorBrewer, gridExtra,
-        ggplot2, clusterProfiler, org.Mm.eg.db, org.Hs.eg.db, ggnewscale,
-        enrichR, foreach, biomaRt,
-        circlize, ComplexHeatmap, doSNOW,
+        ggplot2, ggnewscale,
+        enrichR, foreach,
+        circlize, doSNOW,
         reshape2, pracma, nlme, MASS
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
