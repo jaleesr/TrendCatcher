@@ -1,9 +1,45 @@
-#' Draw DDEGs trajectories from two master.list object and also show LOESS curve fitting with permuataon
+#' Draw DDEGs from one biological pathway from two master.list objects and also show LOESS curve fitting for both experimental groups, and perform permutation test
+#'
+#' For one specific biological pathway, compare its DDEGs from one experimental group to the other one. For example, if group 1 the most dynamic biological pathway
+#' from TimeHeatmap is GO term A, and there were 100 DDEGs identified from experimental group 1. We want to see how these DDEGs behave in the other experimental group.
+#' Maybe they are also dynamic, but activation/deactivation time may differ. This function will fit LOESS smooth curve fitting for each group and compare the trajectories visually.
+#' And run permutation test to see which time interval these two curve is significantlly separated.
+#'
+#' @param master.list.1, a list object. The output from run_TrendCatcher function, contains master.table element.
+#' @param master.list.2, a list object. The output from run_TrendCatcher function, contains master.table element.
+#' @param ht.1, TimeHeatmap object. The output from draw_TimeHeatmap_GO function, contains  GO.df object.
+#' @param pathway, characters. Must be a biological pathway from GO.df, Description column.
+#' @param group.1.name, characters. For example, severe group. By default group1.
+#' @param group.2.name, characters. For example, moderate group. By default group2
+#' @param n.perm, an integer variable, the number of repeated times to run permutation test. By default is 500.
+#' @param parall, a logical variable. If users want to run using multiple core, set it to TRUE. By default is FALSE.
+#' @param pvalue.threshold, a numeric variable. The adjusted p-value for permutation test. By default is 0.05.
+#' @return a list object. Contains elements named adjusted.pvalue.area, perm, st, en and plot. adjusted.pvalue.area is the adjusted p-value for each chopped small time interval area
+#' compared to the permutation test. perm is the permutations test result for each individual run. st is the start separation time. en is the end of the separation time. plot is the ggplot.
+#' 
+#' @examples
+#' \dontrun{
+#' severe.path<-system.file("extdata", "MasterListSevere.rda", package = "TrendCatcher")
+#' load(severe.path)
+#' moderate.path<-system.file("extdata", "MasterListModerate.rda", package = "TrendCatcher")
+#' load(moderate.path)
+#' ht.path<-system.file("extdata", "htSevere.rda", package = "TrendCatcher")
+#' load(ht.path)
+#' perm_output<-draw_CurveComp_Perm(master.list.1 = master.list.severe, 
+#'                                  master.list.2 = master.list.moderate, 
+#'                                  ht.1 = ht.severe, pathway = "neutrophil activation", 
+#'                                  group.1.name = "severe", 
+#'                                  group.2.name = "moderate", 
+#'                                  n.perm = 100, 
+#'                                  parall = FALSE, 
+#'                                   pvalue.threshold = 0.05)
+#' print(perm_output$plot)
+#' }
 #' @export
 #'
 #'
 draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway, 
-                              group.1.name, group.2.name, n.perm = 500, parall = F, 
+                              group.1.name = "group1", group.2.name="group2", n.perm = 500, parall = F, 
                               pvalue.threshold = 0.05){
   if(FALSE){
     master.list.1 = master.list.severe
@@ -12,7 +48,7 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
     pathway = "neutrophil activation" 
     group.1.name = "severe" 
     group.2.name = "moderate" 
-    n.perm = 10 
+    n.perm = 100
     parall = F 
     pvalue.threshold = 0.05
   }
@@ -23,7 +59,7 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
   if(!pathway %in% GO.df$Description){stop("Selected pathway must be in the timeheatmap object!!!")}
   
   ###  Extract DDEGs from both master.list object
-  sub<-GO.df %>% filter(Description == pathway)
+  sub<-GO.df %>% dplyr::filter(Description == pathway)
   sub<-sub[1,]
   gene.arr.up<-as.character(str_split(sub$geneID_up, "/", simplify = T))
   gene.arr.down<-as.character(str_split(sub$geneID_down, "/", simplify = T))
@@ -46,7 +82,7 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
   rep.moderate<-rep.moderate + max(rep.severe)
   
   
-  ############################ LOWESS curve fitting]
+  ############################ LOESS curve fitting]
   ## prepare df
   ID<-c(rep.severe, rep.moderate)
   Count<-c(severe$Center.logFC, moderate$Center.logFC)
@@ -59,8 +95,8 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
   #df$Group<-factor(df$Group, levels = c(group.1.name, group.2.name))
   
   ## prepare dat
-  group.1<-df %>% filter(Group == group.1.name)
-  group.2<-df %>% filter(Group == group.2.name)
+  group.1<-df %>% dplyr::filter(Group == group.1.name)
+  group.2<-df %>% dplyr::filter(Group == group.2.name)
   mod.1 = loess(Count ~ Time, data = group.1)
   mod.2 = loess(Count ~ Time, data = group.2)
   est.1 = predict(mod.1, data.frame(Time = points), se = TRUE)
@@ -84,7 +120,7 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
   #cat("# of Subjects = ", n.subjects, "\n")
   aggregate.df<-df
   
-  ## Run in Parallel
+  ## Run in Parallel, same functions from MetaLonDA
   if(parall == TRUE) {
     max.cores = detectCores()
     cat("# cores = ", max.cores, "\n")
@@ -116,8 +152,8 @@ draw_CurveComp_Perm<-function(master.list.1, master.list.2, ht.1, pathway,
       cat("Special Case: generated permutation is out of range \n")
       assign(paste("Model", j, sep = "_"), NULL)
     } else{
-      group.1<-perm.dat.1 %>% filter(Group == 1)
-      group.2<-perm.dat.1 %>% filter(Group == 2)
+      group.1<-perm.dat.1 %>% dplyr::filter(Group == 1)
+      group.2<-perm.dat.1 %>% dplyr::filter(Group == 2)
       mod.1 = loess(Count ~ Time, data = group.1)
       mod.2 = loess(Count ~ Time, data = group.2)
       est.1 = predict(mod.1, data.frame(Time = points), se = TRUE)

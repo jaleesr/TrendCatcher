@@ -27,10 +27,10 @@ please transform all sample collecting time into hour.}
 \item{min.low.count, }{one numeric variable, the minimal count threshold for filtering low count within each time group.
 By default it is 1.}
 
-\item{para.core.n, }{one numeric variable, number of cores will be used for running TrendCatcher.
+\item{para.core.n, }{one numeric variable, number of cores will be used for running TrendCatcher parallel.
 By default it is NA, which will use N-1 cores from computer.}
 
-\item{dyn.p.thres, }{one numeric variable, the threshold of p-value of the dynamic gene. By default 0.05.}
+\item{dyn.p.thres, }{one numeric variable, the threshold of adjusted p-value of the dynamic gene. By default 0.05.}
 
 \item{show.verbose, }{logic variable. If gssanova fitting failed, users can set this to TRUE, it will print out which gene failed the fitting.
 This process takes only one CPU, so it may be slower than the multi-core version.
@@ -43,7 +43,7 @@ A list object, including "time.unit", "baseline.t", "t.arr", "Project.name", "ra
 \description{
 This is the main function to run TrendCatcher to identify Dynamic Differentially Expressed Genes (DDEGs).
 This function loads a rounded count matrix CSV file after the normalization and batch correction, run the core
-algorithmand output a list object contains all the genes dynamic information.
+algorithm and output a list object contains all the genes dynamic information.
 }
 \examples{
 example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")

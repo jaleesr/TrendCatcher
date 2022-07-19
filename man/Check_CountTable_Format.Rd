@@ -28,7 +28,7 @@ This function checked the count table format, and order the sample columns based
 It will return a right formatted count table to run TrendCatcher.
 }
 \examples{
-example.file.path<-system.file("extdata", "Lung_DemoCountTable.csv", package = "TrendCatcher")
+example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")
 \dontrun{
 count<-Check_CountTable_Format(example.file.path, min.low.count = 1)
 }

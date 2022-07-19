@@ -2,7 +2,7 @@
 % Please edit documentation in R/draw_GOHeatmap.R
 \name{draw_GOHeatmap}
 \alias{draw_GOHeatmap}
-\title{Draw GOHeatmap contianing Terms from TimeHeatmap and included Genes}
+\title{Draw GOHeatmap containing Terms from TimeHeatmap and included Genes}
 \usage{
 draw_GOHeatmap(
   master.list,
@@ -20,6 +20,8 @@ draw_GOHeatmap(
 \arguments{
 \item{master.list, }{a list object. The output from run_TrendCatcher function, contains master.table element.}
 
+\item{time.window, }{a character. Must be one of the merge.df$t.name.}
+
 \item{go.terms, }{a character array. Must be an array of go terms from the merge.df$Description.}
 
 \item{merge.df, }{a dataframe. The output dataframe from output list of draw_TimeHeatmap_GO or draw_TimeHeatmap_enrichR. Use $merge.df to obtain it.}
@@ -28,21 +30,19 @@ draw_GOHeatmap(
 By default is 2, meaning for each gene, the current time window's expression level is 2-fold compared to previous
 break point's expression level.}
 
-\item{time.windown, }{a character. Must be one of the merge.df$t.name.}
+\item{figure.title, }{character}
 
-\item{id.ensembl, }{a logic variable. If using ensembl as the keytype. This must match the row name of master.table.
-By default is TRUE.}
+\item{save.tiff.path, }{by default is NA}
 
-\item{save.as.PDF, }{a character variable. If need to save the figure into PDF file. This must be an absolute
-file path. If not needed save as PDF file, set it to NA. By default iS NA.}
+\item{tiff.res, }{resolution}
 
-\item{pdf.width, }{a numeric variable. The width of PDF file. By default is 13.}
+\item{tiff.width, }{figure width}
 
-\item{pdf.height, }{a numeric variable. The height of PDF file. By default is 15.}
+\item{tiff.height, }{figure height}
 }
 \value{
-A list object, including elements names merge.df and time.heatmap.
-time.heatmap is the ggplot object. merge.df includes all the enrichR enrichment result and activation/deactivation time.
+A list object, including elements named GOheatmap and GOheatmapDat. GOheatmap is a ComplexHeatmap object for figure. GOheatmapDat is a data.frame include log2FC
+value of each gene's expression change compared to the previous break point.
 }
 \description{
 This funcitons takes the master.list output from run_TrendCatcher, and merge.df output from draw_TimeHeatmap_GO and draw_TimeHeatmap_enrichR.
@@ -52,12 +52,11 @@ And showing all the genes used for enrichment analysis and their logFC compared 
 \dontrun{
 example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
 load(example.file.path)
-th.obj<-draw_TimeHeatmap_GO(master.list = master.list)
-merge.df<-th.obj$merg.df
-
+time_heatmap<-draw_TimeHeatmap_GO(master.list = master.list)
+merge.df<-time_heatmap$merg.df
 time.window<-"0h-6h"
 go.terms<-c("regulation of defense response", "leukocyte migration", "myeloid leukocyte migration", "leukocyte chemotaxis",
 "granulocyte chemotaxis", "cellular response to chemokine", "chemokine-mediated signaling pathway", "angiogenesis", "sprouting angiogenesis",  "respone to bacterium", "leukocyte mediated immunity")
-go.df<-draw_GOHeatmap(master.list = master.list, time.window = "0h-6h", go.terms = go.terms, id.ensembl = TRUE, merge.df = merge.df, logFC.thres = 2)
+go.df<-draw_GOHeatmap(master.list = master.list, time.window = "0h-6h", go.terms = go.terms, merge.df = merge.df, logFC.thres = 2)
 }
 }

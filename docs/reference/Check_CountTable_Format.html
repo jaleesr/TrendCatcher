@@ -38,16 +38,16 @@ It will return a right formatted count table to run TrendCatcher.'><!-- mathjax 
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Compare-Curve-Permutation.html">4.Compare DDEGs from same biological pathway but two different groups</a>
+      <a href="../articles/Compare-Curve-Permutation.html">4.Compare a biological pathway temporal behavior between two groups</a>
     </li>
     <li>
-      <a href="../articles/Gene-Trajectory-Analysis.html">2. Gene Trajectory Analysis</a>
+      <a href="../articles/Gene-Trajectory-Analysis.html">2. Analyze trajectories of DDEGs.</a>
     </li>
     <li>
-      <a href="../articles/Identify-Dynamic-Genes.html">1. Identify Dynamic Genes and Generate Master Table.</a>
+      <a href="../articles/Identify-Dynamic-Genes.html">1. Identify dynamic differentially expressed genes (DDEGs) and generate master.list object</a>
     </li>
     <li>
-      <a href="../articles/Time-Heatmap-GO.html">3.Time-Heatmap-GO</a>
+      <a href="../articles/Time-Heatmap-GO.html">3. Generate TimeHeatmap</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -101,7 +101,7 @@ By default it is 1.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">example.file.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"Lung_DemoCountTable.csv"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">example.file.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"Brain_DemoCountTable.csv"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">count</span><span class="op">&lt;-</span><span class="fu">Check_CountTable_Format</span><span class="op">(</span><span class="va">example.file.path</span>, min.low.count <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>

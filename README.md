@@ -2,7 +2,7 @@
 
 # Introduction
 
-TrendCatcher is a versatile R package for identifying dynamic differentially expressed genes (DDEGs) in RNA-seq longitudinal studies. A time course experiment is a widely used design in the study of cellular processes such as cell differentiation or response to external stimuli. Temporal changes to the gene expression, such as mRNA, is the key to characterizing such biological processes. Here, we present a versatile R package named TrendCatcher to identify the dynamic differentially expressed genes along the biological process time course. TrendCatcher uses a framework that combines the smoothing spline ANOVA model and break point searching strategy. Not only can it identify the most dynamic genes, but also can assign temporal trajectory patterns to them. A unique feature of TrendCatcher is the ability to show users the biological pathway enrichment changing over time, which can be used to highlight the distinct transcriptional programs that are associated with dynamic biological processes.
+TrendCatcher is a versatile R package for identifying dynamic differentially expressed genes (DDEGs) in RNA-seq longitudinal studies. A time course experiment is a widely used design in the study of cellular processes such as cell differentiation or response to external stimuli. Temporal changes to the gene expression, such as mRNA, is the key to characterizing such biological processes. Here, we present a versatile R package named TrendCatcher to identify the dynamic differentially expressed genes along the biological process time course. 
 
 
 # Installation
@@ -28,20 +28,18 @@ A PDF manual [TrendCatcher_1.0.0.pdf](./TrendCatcher_1.0.0.pdf) can be found in 
 
 # TrendCatcher Framework Overview
 
-The workflow of TrendCatcher is shown in the figure below. TrendCatcher classifies the observation data into baseline observation count and non-baseline observation count. TrendCatcher fits the constant model to the baseline observation count data, and estimates the baseline fluctuation confidence interval. Then TrendCatcher fits the smooth spline ANOVA model to the non-baseline count data, to estimate the mean count (transcriptional dynamic signal) at each time point. Then, for each non-baseline estimated mean count, TrendCatcher performs an hypothesis test against the baseline fluctuation confidence interval. Later, followed by Fisher's combined probability test, a gene-wise dynamic differentially expressed significance is evaluated. By connecting all the significant transcriptional dynamic signals, and following a break point searching strategy, TrendCatcher is able to assign a trajectory pattern to each gene.
+TrendCatcher requires 2 main inputs: the raw count table C of a temporal study with a dimension of m × n, where m denotes the number of genes and n denotes the number of samples, and a user-defined baseline time variable T, such as “0 hour”. Since samples may have different sequencing depths and batch effect, TrendCatcher integrates with limma and provides preprocessing steps, such as batch correction and normalization. For scRNA-Seq data sets, TrendCatcher extracts cells for each cell type annotated in the meta data slot of Seurat object and converts it into a cell type–specific “pseudobulk” time course RNA library. Based on a user-specified threshold, genes of relatively low abundance are removed from the count table, reads are normalized, and batch effects are removed. TrendCatcher’s core algorithm is composed of 5 main steps: (a) baseline fluctuation confidence interval estimation, (b) model dynamic longitudinal count, (c) time point dynamic P value calculation, (d) gene-wise dynamic P value calculation, and (e) break point screening and gene-wise dynamic pattern assignment. Mathematical details will be expanded in the following sections. 
 
-Furthermore, TrendCatcher provides two main types of output. First is the master table, containing each gene’s dynamic differentially expressed significance (dynamic p-value), and its trajectory pattern. Second is a set of versatile visualization tools, including (a) a hierarchical pie chart showing the trajectory pattern composition; (b) grouped gene trajectories from top trajectory patterns; (c) time-heatmap, a novel time evolved Gene Ontology (GO) enrichment analysis visualization tool. TrendCatcher is an user-friendly R package. It provides RNA-seq data preprocessing, which includes data normalization, batch correction and sample quality check.
+For the output of TrendCatcher, there are mainly 2 components: a master table and a set of functions for versatile visualization purposes. The master table contains all the dynamic details of each single gene, including its dynamic P value, its break point location time, and its dynamic trajectory pattern. In addition to the master table, TrendCatcher produces 5 main types of visualizations: (a) a figure showing the observed counts and fitted splines of each gene, (b) genes trajectories from each trajectory pattern group, (c) a hierarchical pie chart that represents trajectory pattern composition, (d) a TimeHeatmap to infer trajectory dynamics of top dynamic biological pathways, and (e) a 2-sided bar plot to show the top most positively and negatively changed (averaged accumulative log2FC) biological pathways.
 
-![plot](./figures/TrendCatcherWorkFlow.png)
-
-
+![plot](man/figures/TrendCatcherWorkFlow.png)
 
 
-Below are some highlights of using **TrendCatcher**.
+# Some highlights of using **TrendCatcher**.
 
 Some quick examples to show how to use **TrendCatcher**.
 
-## 1. Identify dynamic differentially expressed genes (DDEGs) and generate master.list
+### 1. Identify dynamic differentially expressed genes (DDEGs) and generate master.list object
 
 ```r
 library("TrendCatcher")
@@ -55,7 +53,18 @@ dyn.p.thres = 0.05)
 
 ```
 
-## 2. Group genes based on their trajectory pattern type
+### 2. Draw individual gene trajectory with observed data and fitted data
+
+```r
+gene.symbol.arr<-unique(master.list$master.table$Symbol)[1:6]
+p<-draw_GeneTraj(master.list = master.list, gene.symbol.arr = gene.symbol.arr, ncol = 3, nrow = 2)
+p
+```
+![plot](./man/figures/IndividualGeneTraj.png)
+
+
+
+## 3. Group genes based on their trajectory pattern type
 
 ```r
 draw_TrajClusterGrid(
@@ -66,30 +75,51 @@ draw_TrajClusterGrid(
   pdf.height = 10
 )
 ```
-![plot](./figures/TrajClusterGrid.png)
+![plot](./man/figures/TrajClusterGrid.png)
 
 
-## 3. Plot All types of gene trajectory patterns piechart
+## 4. Visualize biological pathway dynamic progamming using TimeHeatmap
 
-This is a hieracycal piechart. Master pattern is the inner pie chart. Sub pattern is the outside pie chart. It shows the stats of how gene trajactory pattern is distributed.
-
-```r
-draw_TrajClusterPie(
-  master.list,
-  fig.title = "",
-  inner.radius = 0.7,
-  cex.out = 1,
-  cex.in = 1
-)
-```
-![plot](./figures/TrajClusterPie.png)
-
-## 4. Dynamic progamming using TimeHeatmap
-
-To build the Time-Heatmap for visualize the biological pathway enrichment change 
+Generate a TimeHeatmap to visualize the most dynamic top N biological pathways enrichment change 
 over time, we designed a window-sliding strategy to capture all the up-regulated or 
 down-regulated genes for each time interval.
 
-![plot](./figures/Full_TimeHeatmap.png)
+```r
+time_heatmap<-draw_TimeHeatmap_GO(master.list = master.list, logFC.thres = 0, top.n = 10, dyn.gene.p.thres = 0.05, keyType = "SYMBOL", OrgDb = "org.Mm.eg.db", ont = "BP", term.width = 80, GO.enrich.p = 0.05, figure.title = "TimeHeatmap")  
+print(time_hetmap$time.heatmap)
+```
+
+![plot](./man/figures/Full_TimeHeatmap.png)
+
+## 5. Compare dynamic curves of a certain biological pathway between two experimental groups
+
+Same biological pathway may show up in the 2 TimeHeatmap objects from two different experimental groups. To compare its temporal behavior, we calcualted the area difference between two curves and test the seperation significance using permutation approach.
+
+```r
+perm_output<-draw_CurveComp_Perm(master.list.1 = master.list.severe, 
+                                 master.list.2 = master.list.moderate, 
+                                 ht.1 = ht.severe, 
+                                 pathway = "neutrophil activation", 
+                                 group.1.name = "severe", 
+                                 group.2.name = "moderate", 
+                                 n.perm = 100, 
+                                 parall = FALSE, 
+                                 pvalue.threshold = 0.05)
+                                 
+perm_output$plot                            
+```
+
+![plot](./man/figures/CompareCurves.png)
 
 
+# Documentation and Further details
+
+Instructions, documentation, and tutorials can be found at:
+
++ [https://jaleesr.github.io/TrendCatcher](https://jaleesr.github.io/TrendCatcher/)
+
+
+## To cite TrendCatcher
+
+<a id="1"></a> 
+Wang X, Sanborn MA, Dai Y, Rehman J. Temporal transcriptomic analysis using TrendCatcher identifies early and persistent neutrophil activation in severe COVID-19. JCI Insight. 2022 Apr 8;7(7):e157255. doi: 10.1172/jci.insight.157255. PMID: 35175937; PMCID: PMC9057597.

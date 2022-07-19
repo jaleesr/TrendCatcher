@@ -23,6 +23,9 @@ draw_TrajClusterPie(
 
 \item{cex.in, }{a numeric variable. The text size of the label of inner pie chart. By default is 1.}
 }
+\value{
+plot.
+}
 \description{
 Group all DDEGs based on their main-type and sub-type trajectory patterns and plot their composition in a
 hierachical pie chart. Inner pie chart represents the main-type trajectory pattern composition. The outer pie chart

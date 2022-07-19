@@ -2,20 +2,65 @@
 % Please edit documentation in R/draw_CurveComp_Perm.R
 \name{draw_CurveComp_Perm}
 \alias{draw_CurveComp_Perm}
-\title{Draw DDEGs trajectories from two master.list object and also show LOESS curve fitting with permuataon}
+\title{Draw DDEGs from one biological pathway from two master.list objects and also show LOESS curve fitting for both experimental groups, and perform permutation test}
 \usage{
 draw_CurveComp_Perm(
   master.list.1,
   master.list.2,
   ht.1,
   pathway,
-  group.1.name,
-  group.2.name,
+  group.1.name = "group1",
+  group.2.name = "group2",
   n.perm = 500,
   parall = F,
   pvalue.threshold = 0.05
 )
 }
+\arguments{
+\item{master.list.1, }{a list object. The output from run_TrendCatcher function, contains master.table element.}
+
+\item{master.list.2, }{a list object. The output from run_TrendCatcher function, contains master.table element.}
+
+\item{ht.1, }{TimeHeatmap object. The output from draw_TimeHeatmap_GO function, contains  GO.df object.}
+
+\item{pathway, }{characters. Must be a biological pathway from GO.df, Description column.}
+
+\item{group.1.name, }{characters. For example, severe group. By default group1.}
+
+\item{group.2.name, }{characters. For example, moderate group. By default group2}
+
+\item{n.perm, }{an integer variable, the number of repeated times to run permutation test. By default is 500.}
+
+\item{parall, }{a logical variable. If users want to run using multiple core, set it to TRUE. By default is FALSE.}
+
+\item{pvalue.threshold, }{a numeric variable. The adjusted p-value for permutation test. By default is 0.05.}
+}
+\value{
+a list object. Contains elements named adjusted.pvalue.area, perm, st, en and plot. adjusted.pvalue.area is the adjusted p-value for each chopped small time interval area
+compared to the permutation test. perm is the permutations test result for each individual run. st is the start separation time. en is the end of the separation time. plot is the ggplot.
+}
 \description{
-Draw DDEGs trajectories from two master.list object and also show LOESS curve fitting with permuataon
+For one specific biological pathway, compare its DDEGs from one experimental group to the other one. For example, if group 1 the most dynamic biological pathway
+from TimeHeatmap is GO term A, and there were 100 DDEGs identified from experimental group 1. We want to see how these DDEGs behave in the other experimental group.
+Maybe they are also dynamic, but activation/deactivation time may differ. This function will fit LOESS smooth curve fitting for each group and compare the trajectories visually.
+And run permutation test to see which time interval these two curve is significantlly separated.
+}
+\examples{
+\dontrun{
+severe.path<-system.file("extdata", "MasterListSevere.rda", package = "TrendCatcher")
+load(severe.path)
+moderate.path<-system.file("extdata", "MasterListModerate.rda", package = "TrendCatcher")
+load(moderate.path)
+ht.path<-system.file("extdata", "htSevere.rda", package = "TrendCatcher")
+load(ht.path)
+perm_output<-draw_CurveComp_Perm(master.list.1 = master.list.severe, 
+                                 master.list.2 = master.list.moderate, 
+                                 ht.1 = ht.severe, pathway = "neutrophil activation", 
+                                 group.1.name = "severe", 
+                                 group.2.name = "moderate", 
+                                 n.perm = 100, 
+                                 parall = FALSE, 
+                                  pvalue.threshold = 0.05)
+print(perm_output$plot)
+}
 }

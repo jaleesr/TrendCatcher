@@ -23,12 +23,12 @@ draw_TrajClusterGrid<-function(master.list, min.traj.n = 10, save.as.PDF = NA, p
   ### 2. Group trajectory patterns, based on master type, and sub-type (time dependent)
   tab<-table(pattern.df$pattern_str)
   tab<-as.data.frame(tab)
-  tab<-tab %>% filter(Freq !=0 )
+  tab<-tab %>% dplyr::filter(Freq !=0 )
   tab<-tab %>% arrange(desc(Freq))
   colnames(tab)<-c("SubPattern", "Freq")
 
   # Draw the grid plot for trajectories
-  tab.filter<-tab %>% filter(Freq>min.traj.n)
+  tab.filter<-tab %>% dplyr::filter(Freq>min.traj.n)
   tab.filter<-tab.filter %>% dplyr::arrange(desc(Freq))
   nb.cols <- nrow(tab.filter)
   mycolors <- colorRampPalette(brewer.pal(8, "Set2"))(nb.cols)

@@ -3,7 +3,7 @@
 #' This function takes the master.list object output from run_TrendCatcher function, and an array of gene(s). 
 #' It will draw gene(s) trajectory with observed data and fitted data.
 #'  
-#' @param master.list.new, a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.
+#' @param master.list, a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.
 #' @param gene.symbol.arr, a character array. It must be a subset of row names from the master.list$master.table$Symbol. 
 #' The Symbol column need get_GeneEnsembl2Symbol function to convert original ensembl ID into gene symbol.
 #' @param savepdf.path, an obsolute file path to save the figure as PDF file. By default is NA, it will be printed.
@@ -15,10 +15,6 @@
 #' @param fig.height, a numeric variable. If save figure as PDF file, the height of the PDF file. By default is 10.
 #' 
 #' 
-#' 
-#' @param count.table, the count table of mRNA.
-#' @param gene.name, name of the gene you would like to plot.
-#' @param master.list, the list object returned from run_TrendCatcher.
 #' @return "arrangelist" "list" object.
 #' 
 # 
@@ -27,7 +23,7 @@
 draw_GeneTraj<-function(master.list, gene.symbol.arr, savepdf.path=NA, ncol = 5, nrow = 3, fig.width = 15, fig.height = 10){
   
   # Subset master.table
-  sub<-master.list$master.table %>% filter(Symbol %in% gene.symbol.arr)
+  sub<-master.list$master.table %>% dplyr::filter(Symbol %in% gene.symbol.arr)
   count.table<-master.list$raw.df[rownames(master.list$raw.df) %in% sub$Gene,]
 
 
@@ -49,7 +45,7 @@ draw_GeneTraj<-function(master.list, gene.symbol.arr, savepdf.path=NA, ncol = 5,
     df<-data.frame(Time = t.arr, Count = gene.row.info)
     p[[i]]<-ggplot()
     p[[i]]<-p[[i]]+geom_point(data = df, aes(x = Time, y = Count))
-    fit.df<-master.list$fitted.count %>% filter(Gene == gene.ensembl)
+    fit.df<-master.list$fitted.count %>% dplyr::filter(Gene == gene.ensembl)
     disp<-fit.df$disp[1]
     mu<-fit.df$mu[1]
     p[[i]]<-p[[i]]+geom_point(data = fit.df, aes(x = Time, y = Fit.Count), colour = "red")

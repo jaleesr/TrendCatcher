@@ -33,16 +33,16 @@ It will draw gene(s) trajectory with observed data and fitted data."><!-- mathja
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Compare-Curve-Permutation.html">4.Compare DDEGs from same biological pathway but two different groups</a>
+      <a href="../articles/Compare-Curve-Permutation.html">4.Compare a biological pathway temporal behavior between two groups</a>
     </li>
     <li>
-      <a href="../articles/Gene-Trajectory-Analysis.html">2. Gene Trajectory Analysis</a>
+      <a href="../articles/Gene-Trajectory-Analysis.html">2. Analyze trajectories of DDEGs.</a>
     </li>
     <li>
-      <a href="../articles/Identify-Dynamic-Genes.html">1. Identify Dynamic Genes and Generate Master Table.</a>
+      <a href="../articles/Identify-Dynamic-Genes.html">1. Identify dynamic differentially expressed genes (DDEGs) and generate master.list object</a>
     </li>
     <li>
-      <a href="../articles/Time-Heatmap-GO.html">3.Time-Heatmap-GO</a>
+      <a href="../articles/Time-Heatmap-GO.html">3. Generate TimeHeatmap</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -79,7 +79,7 @@ It will draw gene(s) trajectory with observed data and fitted data.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>master.list, </dt>
-<dd><p>the list object returned from run_TrendCatcher.</p></dd>
+<dd><p>a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.</p></dd>
 
 
 <dt>gene.symbol.arr, </dt>
@@ -108,18 +108,6 @@ This represents the number of row of the grid layout.</p></dd>
 <dt>fig.height, </dt>
 <dd><p>a numeric variable. If save figure as PDF file, the height of the PDF file. By default is 10.</p></dd>
 
-
-<dt>master.list.new, </dt>
-<dd><p>a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.</p></dd>
-
-
-<dt>count.table, </dt>
-<dd><p>the count table of mRNA.</p></dd>
-
-
-<dt>gene.name, </dt>
-<dd><p>name of the gene you would like to plot.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -128,17 +116,6 @@ This represents the number of row of the grid layout.</p></dd>
 <p>"arrangelist" "list" object.</p>
     </div>
 
-    <div id="ref-examples">
-    <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">gene.symbol.arr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cxcl1"</span>, <span class="st">"Cxcl5"</span>, <span class="st">"Cxcl10"</span>, <span class="st">"Cxcl11"</span>, <span class="st">"Abcb1b"</span>, <span class="st">"Icam1"</span>, <span class="st">"Ifitm1"</span>, <span class="st">"Ifitm2"</span>, <span class="st">"Ifitm3"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">example.file.path</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"BrainMasterList.rda"</span>, package <span class="op">=</span> <span class="st">"TrendCatcher"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span>file<span class="op">=</span> <span class="va">example.file.path</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gene.symbol.df</span><span class="op">&lt;-</span><span class="fu"><a href="get_GeneEnsembl2Symbol.html">get_GeneEnsembl2Symbol</a></span><span class="op">(</span>ensemble.arr <span class="op">=</span> <span class="va">master.list</span><span class="op">$</span><span class="va">master.table</span><span class="op">$</span><span class="va">Gene</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">master.table.new</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">master.list</span><span class="op">$</span><span class="va">master.table</span>, <span class="va">gene.symbol.df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">master.list</span><span class="op">$</span><span class="va">master.table</span><span class="op">$</span><span class="va">Gene</span>, <span class="va">gene.symbol.df</span><span class="op">$</span><span class="va">Gene</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Symbol"</span>, <span class="st">"description"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">master.list</span><span class="op">$</span><span class="va">master.table</span><span class="op">&lt;-</span><span class="va">master.table.new</span></span></span>
-<span class="r-in"><span><span class="va">gplots</span><span class="op">&lt;-</span><span class="fu">draw_GeneTraj</span><span class="op">(</span><span class="va">master.list</span>, <span class="va">gene.symbol.arr</span>, savepdf.path <span class="op">=</span> <span class="cn">NA</span>, ncol <span class="op">=</span> <span class="fl">3</span>, nrow <span class="op">=</span> <span class="fl">3</span>, fig.width <span class="op">=</span><span class="fl">15</span>, fig.height<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
-</code></pre></div>
-    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

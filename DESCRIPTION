@@ -10,27 +10,41 @@ Authors@R:
 Description: Identify dynamic gene from longitudinal/time course RNA-seq dataset.
 License: GPL (>= 2)
 Encoding: UTF-8
-Depends: 
-        R (>= 3.6.0), 
-        RColorBrewer,
-        plyr, 
-        gss, 
-        compiler, 
-        stringr, 
-        gridExtra,
-        ggplot2, 
-        ggnewscale,
-        enrichR, 
-        foreach,
-        circlize, 
-        doSNOW,
-        reshape2, 
-        pracma, 
-        nlme, 
-        MASS
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
-NeedsCompilation: no
-Packaged: 2022-07-11 00:23:29 UTC; xingewang
-Author: Xinge Wang [aut, cre]
-Maintainer: Xinge Wang <xwang234@uic.edu>
+Depends: 
+     RColorBrewer,
+     plyr,
+     dplyr,
+     gss,
+     compiler, 
+     stringr, 
+     gridExtra,
+     ggplot2, 
+     ggnewscale,
+     enrichR, 
+     foreach,
+     circlize, 
+     doSNOW,
+     reshape2, 
+     pracma, 
+     nlme, 
+     MASS,
+     sva, 
+     ComplexHeatmap, 
+     DESeq2, 
+     Rcpp, 
+     clusterProfiler, 
+     edgeR,
+     org.Hs.eg.db, 
+     org.Mm.eg.db
+Suggests: 
+    knitr,
+    rmarkdown,
+    pkgdown
+VignetteBuilder: knitr
+Imports: 
+    biomaRt,
+    scales
+    

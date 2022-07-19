@@ -16,6 +16,14 @@ fit_single_gene_const(
 \item{count.arr, }{a data frame returned from transform_single_gene_df, only with the baseline time.}
 
 \item{disp.var, }{the dispersion value estimated from DESeq2.}
+
+\item{MAXIT, }{\enumerate{
+\item 
+}}
+
+\item{RELTOL, }{10*-8}
+
+\item{trace, }{10}
 }
 \value{
 a list contain all the estimated value from NB model.

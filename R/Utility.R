@@ -1,4 +1,3 @@
-
 #' Get the time array from count table
 #'
 #' It take the count table, grep the time element from column name.
@@ -6,6 +5,13 @@
 #'
 #' @param raw.count.df, a count table.
 #' @return a numeric array of each sample's time.
+#' @import RColorBrewer circlize compiler doSNOW
+#' @import enrichR foreach ggnewscale ggplot2 gridExtra gss nlme
+#' @import pracma reshape2 stringr
+#' @importFrom grDevices as.graphicsAnnot col2rgb colorRampPalette dev.flush dev.hold dev.off pdf rgb tiff
+#' @importFrom graphics boxplot lines par pie plot.new plot.window polygon text title
+#' @importFrom stats aggregate cutree dist dnbinom hclust loess optim p.adjust pchisq pnbinom predict qnbinom
+#' @importFrom utils capture.output read.csv setTxtProgressBar txtProgressBar
 #' @export
 #'
 get_time_array<-function(raw.count.df){
@@ -78,6 +84,9 @@ ConstNB_comp <- compiler::cmpfun(ConstNB)
 #'
 #' @param count.arr, a data frame returned from transform_single_gene_df, only with the baseline time.
 #' @param disp.var, the dispersion value estimated from DESeq2.
+#' @param MAXIT, 1000.
+#' @param RELTOL, 10*-8
+#' @param trace, 10
 #' @return a list contain all the estimated value from NB model.
 #' @export
 #'
@@ -154,11 +163,7 @@ cal_time_p_single_gene<-function(const.output, spline.output){
 
 
 
-# Copied from ex-CRAN package MADAM and exported. The man pages are copied from
-# the original package.
-# Due to the metaseqR package didn't support R 4.0, source code were copied here.
-# Copied from ex-CRAN package MADAM and exported. The man pages are copied from
-# the original package.
+# Due to the metaseqR package didn't support R 4.0, source code were attached here.
 fisher.sum <- function(p,zero.sub=0.00001,na.rm=FALSE) {
   if(any(p>1, na.rm=TRUE)||any(p<0, na.rm=TRUE))
     stop("You provided bad p-values")
@@ -274,7 +279,7 @@ get_traj_pattern<-function(t.arr){
 return.center<-function(master.list, gene.arr){
   fit.count<-master.list$fitted.count
   fit.count$Symbol<-master.list$master.table$Symbol[match(fit.count$Gene, master.list$master.table$Gene)]
-  fit.count<-fit.count %>% filter(Symbol %in% gene.arr)
+  fit.count<-fit.count %>% dplyr::filter(Symbol %in% gene.arr)
   df<-ddply(fit.count, .(Gene), function(df){
     base<-df$Fit.Count[1]
     df$Center.logFC<-log(df$Fit.Count/base, 2)
@@ -306,12 +311,18 @@ intervalArea.new = function(dd.1, dd.2){
   return(area)
 }
 
-#' CurveFitting 
+#' CurveFitting function
+#' 
+#' To perform Local Polynomial Regression Fitting
+#' 
+#' @param perm.dat.1, data to fit the curve.
+#' @param points, array of time values.
+#' @return fitted count over time
 #' @export
 #'
 curveFitting.new = function(perm.dat.1, points){
-  group.1<-perm.dat.1 %>% filter(Group == 1)
-  group.2<-perm.dat.1 %>% filter(Group == 2)
+  group.1<-perm.dat.1 %>% dplyr::filter(Group == 1)
+  group.2<-perm.dat.1 %>% dplyr::filter(Group == 2)
   mod.1 = loess(Count ~ Time, data = group.1)
   mod.2 = loess(Count ~ Time, data = group.2)
   est.1 = predict(mod.1, data.frame(Time = points), se = TRUE)
@@ -388,7 +399,15 @@ findSigInterval = function(adjusted.pvalue, threshold = 0.05, sign)
 }
 
 
-#' Permuation
+#' Permutation test
+#' 
+#' Function to perform permutation test.
+#' 
+#' @param perm.dat, temporal data frame to perform permutation.
+#' @param n.perm, time to perm
+#' @param points, array of time values
+#' @param parall, run using multiple core
+#' @return permutation test output data
 #' @export
 #'
 

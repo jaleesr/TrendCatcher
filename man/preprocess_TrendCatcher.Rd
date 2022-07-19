@@ -44,12 +44,17 @@ It takes the CSV file count table and logic variables to check if normalization 
 It creates pdf figure report to show before and after of normalization and batch correction to assess quality control (QC).
 }
 \examples{
-example.file.path<-system.file("extdata", "Brain_DemoCountRawTable.csv", package = "TrendCatcher")
+example.file.path<-system.file("extdata", "Brain_DemoRawCountTable.csv", package = "TrendCatcher")
 \dontrun{
 count.table<-preprocess_TrendCatcher(count.table.path = example.file.path,
 need.batch.correction = TRUE,
 need.normalization = TRUE,
-batch.arr ="",
+batch.arr<-c(2,2,3,3,3,
+             3,3,3,3,0,
+             2,3,0,4,
+             3,3,2,2,0,4,
+             3,3,2,0,
+              2,2,0,4),
 pdf.file.path = NA,
 pdf.width=8, pdf.height=10,
 n.low.count = 10)

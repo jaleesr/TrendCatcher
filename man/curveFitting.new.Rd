@@ -2,10 +2,18 @@
 % Please edit documentation in R/Utility.R
 \name{curveFitting.new}
 \alias{curveFitting.new}
-\title{CurveFitting}
+\title{CurveFitting function}
 \usage{
 curveFitting.new(perm.dat.1, points)
 }
+\arguments{
+\item{perm.dat.1, }{data to fit the curve.}
+
+\item{points, }{array of time values.}
+}
+\value{
+fitted count over time
+}
 \description{
-CurveFitting
+To perform Local Polynomial Regression Fitting
 }

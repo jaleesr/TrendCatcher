@@ -15,7 +15,7 @@ draw_GeneTraj(
 )
 }
 \arguments{
-\item{master.list, }{the list object returned from run_TrendCatcher.}
+\item{master.list, }{a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.}
 
 \item{gene.symbol.arr, }{a character array. It must be a subset of row names from the master.list$master.table$Symbol.
 The Symbol column need get_GeneEnsembl2Symbol function to convert original ensembl ID into gene symbol.}
@@ -31,12 +31,6 @@ This represents the number of row of the grid layout.}
 \item{fig.width, }{a numeric variable. If save figure as PDF file, the width of the PDF file. By default is 15.}
 
 \item{fig.height, }{a numeric variable. If save figure as PDF file, the height of the PDF file. By default is 10.}
-
-\item{master.list.new, }{a list object. Output from the run_TrendCatcher with ID conversion to add Symbol column to master table.}
-
-\item{count.table, }{the count table of mRNA.}
-
-\item{gene.name, }{name of the gene you would like to plot.}
 }
 \value{
 "arrangelist" "list" object.

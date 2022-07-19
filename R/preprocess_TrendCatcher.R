@@ -20,12 +20,17 @@
 #' @return A matrix array object.
 #'
 #' @examples
-#' example.file.path<-system.file("extdata", "Brain_DemoCountRawTable.csv", package = "TrendCatcher")
+#' example.file.path<-system.file("extdata", "Brain_DemoRawCountTable.csv", package = "TrendCatcher")
 #' \dontrun{
 #' count.table<-preprocess_TrendCatcher(count.table.path = example.file.path,
 #' need.batch.correction = TRUE,
 #' need.normalization = TRUE,
-#' batch.arr ="",
+#' batch.arr<-c(2,2,3,3,3,
+#'              3,3,3,3,0,
+#'              2,3,0,4,
+#'              3,3,2,2,0,4,
+#'              3,3,2,0,
+#'               2,2,0,4),
 #' pdf.file.path = NA,
 #' pdf.width=8, pdf.height=10,
 #' n.low.count = 10)
@@ -40,6 +45,22 @@ preprocess_TrendCatcher<-function(count.table.path = "",
                                   pdf.file.path = NA,
                                   pdf.width=8, pdf.height=10,
                                   n.low.count = 10){
+  ## for testing
+  if(FALSE){
+    count.table.path<-system.file("extdata", "Brain_DemoRawCountTable.csv", package = "TrendCatcher")
+    need.batch.correction = TRUE
+    need.normalization = TRUE
+    batch.arr<-c(2,2,3,3,3,
+                 3,3,3,3,0,
+                 2,3,0,4,
+                 3,3,2,2,0,4,
+                 3,3,2,0,
+                 2,2,0,4)
+    pdf.file.path = NA
+    pdf.width=8
+    pdf.height=10
+    n.low.count = 10
+  }
 
   ### 1.Check the count table path
   if(!file.exists(count.table.path)) stop("Count table file doesn't exist!")
@@ -97,7 +118,7 @@ preprocess_TrendCatcher<-function(count.table.path = "",
   dge.origin <- DGEList(counts = raw.count, genes = rownames(raw.count))
   group<-factor(pheno.df$time)
   keep<-filterByExpr(dge.origin, group = group)
-  dge.origin <- dge[keep,,keep.lib.sizes=FALSE]
+  dge.origin <- dge.origin[keep,,keep.lib.sizes=FALSE]
   adjusted <- ComBat_seq(dge.origin$counts, batch=pheno.df$batch, group=group)
 
   ######## Normaliztion ###############
@@ -163,7 +184,7 @@ preprocess_TrendCatcher<-function(count.table.path = "",
 
     plotMDS(logCPM, col=col.time, pch = 16, labels = colnames(logCPM))
     title("After batch correction (color by sample name)")
-    plotMDS(logCPM,col=col.batch, pch=16, labels = raw.data$pheno$batch)
+    plotMDS(logCPM,col=col.batch, pch=16, labels = pheno.df$batch)
     title("After batch correction (color by batch)")
   }
   ##### Return filtered count table

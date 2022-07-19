@@ -2,10 +2,22 @@
 % Please edit documentation in R/Utility.R
 \name{permutation.new}
 \alias{permutation.new}
-\title{Permuation}
+\title{Permutation test}
 \usage{
 permutation.new(perm.dat, n.perm = 100, points, parall = FALSE)
 }
+\arguments{
+\item{perm.dat, }{temporal data frame to perform permutation.}
+
+\item{n.perm, }{time to perm}
+
+\item{points, }{array of time values}
+
+\item{parall, }{run using multiple core}
+}
+\value{
+permutation test output data
+}
 \description{
-Permuation
+Function to perform permutation test.
 }

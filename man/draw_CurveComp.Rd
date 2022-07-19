@@ -2,15 +2,15 @@
 % Please edit documentation in R/draw_CurveComp.R
 \name{draw_CurveComp}
 \alias{draw_CurveComp}
-\title{Draw DDEGs trajectories from two master.list object and also show LOESS curve fitting}
+\title{Draw DDEGs from one biological pathway from two master.list objects and also show LOESS curve fitting for both experimental groups}
 \usage{
 draw_CurveComp(
   master.list.1,
   master.list.2,
   ht.1,
-  pathway,
-  group.1.name,
-  group.2.name
+  pathway = "",
+  group.1.name = "group1",
+  group.2.name = "group2"
 )
 }
 \arguments{
@@ -22,14 +22,28 @@ draw_CurveComp(
 
 \item{pathway, }{characters. Must be a biological pathway from GO.df, Description column.}
 
-\item{group.1.name, }{characters. For example, severe group.}
+\item{group.1.name, }{characters. For example, severe group. By default group1.}
 
-\item{group.2.name, }{characters. For example, moderate group.}
+\item{group.2.name, }{characters. For example, moderate group. By default group2}
 }
 \value{
 A ggplot object and plot.
 }
 \description{
-This funcitons takes the master.list output from run_TrendCatcher, and merge.df output from draw_TimeHeatmap_GO and draw_TimeHeatmap_enrichR.
-And showing all the genes used for enrichment analysis and their logFC compared to previous break point.
+For one specific biological pathway, compare its DDEGs from one experimental group to the other one. For example, if group 1 the most dynamic biological pathway
+from TimeHeatmap is GO term A, and there were 100 DDEGs identified from experimental group 1. We want to see how these DDEGs behave in the other experimental group.
+Maybe they are also dynamic, but activation/deactivation time may differ. This function will fit LOESS smooth curve fitting for each group and compare the trajectories visually.
+}
+\examples{
+\dontrun{
+severe.path<-system.file("extdata", "MasterListSevere.rda", package = "TrendCatcher")
+load(severe.path)
+moderate.path<-system.file("extdata", "MasterListModerate.rda", package = "TrendCatcher")
+load(moderate.path)
+ht.path<-system.file("extdata", "htSevere.rda", package = "TrendCatcher")
+load(ht.path)
+g<-draw_CurveComp(master.list.1 = master.list.severe, master.list.2 = master.list.moderate, ht.1 = ht.severe, pathway = "neutrophil activation",group.1.name = "severe", group.2.name = "moderate")
+print(g)
+}
+
 }

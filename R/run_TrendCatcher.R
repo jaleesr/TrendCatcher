@@ -2,20 +2,19 @@
 #'
 #' This is the main function to run TrendCatcher to identify Dynamic Differentially Expressed Genes (DDEGs).
 #' This function loads a rounded count matrix CSV file after the normalization and batch correction, run the core
-#' algorithmand output a list object contains all the genes dynamic information.
+#' algorithm and output a list object contains all the genes dynamic information.
 #'
 #' @param count.table.path, string contain the absolute path of the CSV file count table,
 #' with first column as GENE SYMBOL or GENE ENSEMBL and first row as SAMPLE NAME (with format composed by project name,time and
 #' replicateID, such as "Lung_0_Rep1")
 #' @param baseline.t, one numeric variable, the baseline time of the longitudinal study. By default it is 0.
-
 #' @param time.unit, one character variable, the time unit of longitudinal study. If choose hour,
 #' please transform all sample collecting time into hour.
 #' @param min.low.count, one numeric variable, the minimal count threshold for filtering low count within each time group.
 #' By default it is 1.
-#' @param para.core.n, one numeric variable, number of cores will be used for running TrendCatcher.
+#' @param para.core.n, one numeric variable, number of cores will be used for running TrendCatcher parallel.
 #' By default it is NA, which will use N-1 cores from computer.
-#' @param dyn.p.thres, one numeric variable, the threshold of p-value of the dynamic gene. By default 0.05.
+#' @param dyn.p.thres, one numeric variable, the threshold of adjusted p-value of the dynamic gene. By default 0.05.
 #' @param show.verbose, logic variable. If gssanova fitting failed, users can set this to TRUE, it will print out which gene failed the fitting. 
 #' This process takes only one CPU, so it may be slower than the multi-core version. 
 #' Normally the fitting failure is caused by low count genes. Users can manually remove it from your count table. By default set to FALSE.

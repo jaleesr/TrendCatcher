@@ -71,6 +71,8 @@ my.pie<-function (x, labels = names(x), edges = 200, radius = 0.8, clockwise = F
 #' @param inner.radius, a numeric variable. The inner pie chart radius size. By default is 0.7.
 #' @param cex.out, a numeric variable. The text size of label of outer pie chart. By default is 1.
 #' @param cex.in, a numeric variable. The text size of the label of inner pie chart. By default is 1.
+#' 
+#' @return plot.
 #' @export
 #'
 
@@ -109,8 +111,8 @@ draw_TrajClusterPie<-function(master.list, fig.title = "", inner.radius = 0.7, c
   data.in<-aggregate(Perc~MasterPattern, data.out, sum)
   colnames(data.in)[2]<-"Share"
   data.out<-merge(data.in,data.out)
-  data.out<-data.out %>% group_by(MasterPattern, SubPattern) %>% arrange(desc(Share))
-  data.in<-data.in %>% arrange(desc(Share))
+  data.out<-data.out %>% dplyr::group_by(MasterPattern, SubPattern) %>% arrange(desc(Share))
+  data.in<-data.in %>% dplyr::arrange(desc(Share))
   data.out<-as.data.frame(data.out)
   data.in<-as.data.frame(data.in)
 

@@ -2,11 +2,11 @@
 % Please edit documentation in R/draw_TimeHeatmap_GO.R
 \name{draw_TimeHeatmap_GO}
 \alias{draw_TimeHeatmap_GO}
-\title{Draw Time-Heatmap Using Gene Ontology (GO) Enrichment}
+\title{Draw TimeHeatmap Using Gene Ontology (GO) Enrichment}
 \usage{
 draw_TimeHeatmap_GO(
   master.list,
-  logFC.thres = 1,
+  logFC.thres = 0,
   top.n = 10,
   dyn.gene.p.thres = 0.05,
   keyType = "SYMBOL",
@@ -24,43 +24,45 @@ draw_TimeHeatmap_GO(
 \arguments{
 \item{master.list, }{a list object. The output from run_TrendCatcher function, contains master.table element.}
 
-\item{logFC.thres, }{a numeric variable. The logFC threshold compared to each genes previous break point expression level.
-By default is 1, meaning for each gene, the current time window's expression level is 2-fold compared to previous
+\item{logFC.thres, }{a numeric variable. The logFC threshold compared to each gene's previous break point expression level.
+By default is 0, meaning for each gene, the current time window's expression level is 2-fold compared to previous
 break point's expression level.}
 
-\item{top.n, }{an integer variable. The top N GO enrichment term need to be shown in the Time-Heatmap for up and down
-regulated pathway. By default is 10. Top 20 GO terms, 10 from up-regulated pathway and 10 from down-regulated pathway
-will shown in Time-Heatmap.}
+\item{top.n, }{an integer variable. The top N GO enrichment term need to be shown in the TimeHeatmap for up and down
+regulated pathway (based on the change of first time interval). By default is 10. Top 20 GO terms, 10 from up-regulated pathway and 10 from down-regulated pathway
+will shown in TimeHeatmap.}
 
-\item{dyn.gene.p.thres, }{a numeric variable. The DDEGs dynamic p-value threshold. By default is 0.05.}
+\item{dyn.gene.p.thres, }{a numeric variable. The DDEGs adjusted dynamic p-value threshold. By default is 0.05.}
 
 \item{keyType, }{must be either ENSEMBL or SYMBOL. The row names of your master.list$master.table.}
 
-\item{OrgDb, }{must be either "org.Mm.eg.db" or "org.Hg.eg.db". Currently only support mouse and human GO annotation database.}
+\item{OrgDb, }{must be either "org.Mm.eg.db" or "org.Hs.eg.db". Currently only support mouse and human GO annotation database.}
 
-\item{ont, }{one of "BP", "MF", and "CC" subontologies, or "ALL" for all three. By default is "BP".}
+\item{ont, }{one of "BP", "MF", and "CC" sub ontologies, or "ALL" for all three. By default is "BP".}
 
 \item{term.width, }{an integer variable. The character length for each GO term. If one GO term is super long, we can wrap
-it into term.width of strings into multiple rows. By default if 80.}
+it into term.width of strings into multiple rows. By default is 80.}
 
 \item{GO.enrich.p, }{an numeric variable. The GO enrichment p-value threshold. By default if 0.05.}
 
-\item{figure.title, }{a character variable. The main title of Time-Heatmap.}
+\item{figure.title, }{a character variable. The main title of TimeHeatmap.}
 
-\item{save.pdf.path, }{a character variable. If need to save the figure into PDF file. This must be an absolute
-file path. If not needed save as PDF file, set it to NA. By defualt iS NA.}
+\item{save.tiff.path, }{a character variable, the file path to save the TIFF figure. If set to NA, it will plot it out. By default is NA.}
 
-\item{pdf.width, }{a numeric variable. The width of PDF file. By default is 15.}
+\item{tiff.res, }{a numeric variable, the resolution of the TIFF figure. By default is 100.}
 
-\item{pdf.height, }{a numeric variable. The height of PDF file. By default is 15.}
+\item{tiff.width, }{a numeric variable, the width of the TIFF figure. By default is 1500.}
+
+\item{tiff.height, }{a numeric variable, the height of the TIFF figure. By default is 1500.}
 }
 \value{
-A list object, including elements names merge.df and time.heatmap.
-time.heatmap is the ggplot object. merge.df includes all the GO enrichment result and activation/deactivation time.
+A list object, including elements names time.heatmap, merge.df and GO.df.
+time.heatmap is the ComplexHeatmap object. merge.df includes all the GO enrichment result and their activation/deactivation time window.
+GO.df includes GO enrichment used for plot TimeHeatmap and all the individual genes within each time window.
 }
 \description{
 This funcitons takes the master.list output from run_TrendCatcher. And apply a time window sliding strategy
-to capture all the genes increased/decreased compared to its previous break point, and apply GO enrichment
+to capture all the DDEGs increased/decreased compared to its previous break point, and apply GO enrichment
 analysis.
 }
 \examples{

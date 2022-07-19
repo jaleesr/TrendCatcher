@@ -2,7 +2,7 @@
 % Please edit documentation in R/draw_TimeHeatmap_selGO.R
 \name{draw_TimeHeatmap_selGO}
 \alias{draw_TimeHeatmap_selGO}
-\title{Subset TimeHeatmap}
+\title{Subset TimeHeatmap by providing a manually selected non-redundant GO terms}
 \usage{
 draw_TimeHeatmap_selGO(
   time_heatmap,
@@ -18,6 +18,46 @@ draw_TimeHeatmap_selGO(
   tiff.height = 1500
 )
 }
+\arguments{
+\item{time_heatmap, }{a list, the output of draw_TimeHeatmap_GO function. A TimeHeatmap object, with GO.df element included.}
+
+\item{sel.go, }{a character variable. An array of character names of GO terms, that match the GO terms from the Description column of GO.df.}
+
+\item{master.list, }{a list, the output of run_TrendCatcher function, a master.list object.}
+
+\item{GO.perc.thres, }{a numeric variable. A threshold to filter out GOs that only a little percentage of the genes are DDEGs. By default is 0.}
+
+\item{nDDEG.thres, }{an integer variable. A threshold to filter out GOs that only a small number of genes included. By default is 0.}
+
+\item{term.width, }{an integer variable. The character length for each GO term. If one GO term is super long, we can wrap
+it into term.width of strings into multiple rows. By default is 80.}
+
+\item{figure.title, }{a character variable. The main title of TimeHeatmap.}
+
+\item{save.tiff.path, }{a character variable, the file path to save the TIFF figure. If set to NA, it will plot it out. By default is NA.}
+
+\item{tiff.res, }{a numeric variable, the resolution of the TIFF figure. By default is 100.}
+
+\item{tiff.width, }{a numeric variable, the width of the TIFF figure. By default is 1500.}
+
+\item{tiff.height, }{a numeric variable, the height of the TIFF figure. By default is 1500.}
+}
+\value{
+A list object, including elements names time.heatmap, merge.df and GO.df.
+time.heatmap is the ComplexHeatmap object. merge.df includes all the GO enrichment result and their activation/deactivation time window.
+GO.df includes GO enrichment used for plot TimeHeatmap and all the individual genes within each time window.
+}
 \description{
-Subset TimeHeatmap
+Some GO terms are redundant. Users can manually select GO terms that are shown in the GO.df element in the TimeHeatmap object and show the TimeHeatmap figure.
+}
+\examples{
+\dontrun{
+example.file.path<-system.file("extdata", "BrainMasterList.rda", package = "TrendCatcher")
+load(example.file.path)
+gene.symbol.df<-get_GeneEnsembl2Symbol(ensemble.arr = master.list$master.table$Gene)
+time_heatmap<-draw_TimeHeatmap_GO(master.list = master.list)
+go.terms<-unique(time_heatmap$GO.df$Description)[1:5]
+time_heatmap_selGO<-draw_TimeHeatmap_selGO(time_heatmap = time_heatmap, sel.go = go.terms, master.list = master.list, GO.perc.thres = 0, nDDEG.thres = 0, save.tiff.path = NA)
+}
+
 }

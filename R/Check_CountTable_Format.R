@@ -18,7 +18,7 @@
 #' "count.table", filtered out low genes for further fitting; "removed.genes", low count genes.
 #'
 #' @examples
-#' example.file.path<-system.file("extdata", "Lung_DemoCountTable.csv", package = "TrendCatcher")
+#' example.file.path<-system.file("extdata", "Brain_DemoCountTable.csv", package = "TrendCatcher")
 #' \dontrun{
 #' count<-Check_CountTable_Format(example.file.path, min.low.count = 1)
 #' }
