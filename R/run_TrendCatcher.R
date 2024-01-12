@@ -52,7 +52,7 @@ run_TrendCatcher<-function(count.table.path = "~/Documents/TrendCatcher/inst/ext
 
   ##### Step 1, check count table format, and filter out low count gene
   message("Read count table.")
-  raw.list<-Check_CountTable_Format(count.table.path = count.table.path, min.low.count = 1)
+  raw.list<-Check_CountTable_Format(count.table.path = count.table.path, min.low.count = min.low.count)
   raw.df<-raw.list$count.table
   remove.genes<-raw.list$remove.genes
   origin.count.table<-raw.list$raw.df
