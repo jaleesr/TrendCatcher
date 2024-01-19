@@ -72,7 +72,7 @@ draw_TimeHeatmap_enrichR<-function(master.list, logFC.thres = 0, top.n = 10, dyn
   t.arr<-master.list$t.arr
   ### 2. Get the time unit
   t.unit<-master.list$time.unit
-  if(is.na(t.arr) || is.na(t.unit)) stop("Master.list needs time unit and time array.")
+  if(unique(is.na(t.arr)) || is.na(t.unit)) stop("Master.list needs time unit and time array.")
   ### 3. Filter out only dyn-DEGs
   dyn.gene.pattern<-master.list$master.table %>% filter(dyn.p.val.adj<=dyn.gene.p.thres)
   
