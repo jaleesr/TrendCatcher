@@ -77,7 +77,7 @@ draw_TimeHeatmap_GO<-function(master.list, logFC.thres = 0, top.n = 10, dyn.gene
   ### 2. Get the time unit
   t.unit <- master.list$time.unit
   ### 3. Filter out only dyn-DDEGs
-  if (is.na(t.arr) || is.na(t.unit)) 
+  if (unique(is.na(t.arr)) || is.na(t.unit)) 
     stop("Master.list needs time unit and time array.")
   dyn.gene.pattern <- master.list$master.table %>% filter(dyn.p.val.adj <= 
                                                             dyn.gene.p.thres)
